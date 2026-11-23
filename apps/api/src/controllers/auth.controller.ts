@@ -20,7 +20,7 @@ export class AuthController {
 
       try {
         const result = await this.authService.register(input.data);
-        return res.status(201).json(result);
+        return res.status(201).json({ data: result, ...result });
       } catch (err: any) {
         if (err?.code === 'P2002') {
           return res.status(409).json({ error: { code: 'ALREADY_EXISTS' } });
@@ -47,7 +47,7 @@ export class AuthController {
       if (!result) {
         return res.status(401).json({ error: { code: 'INVALID_CREDENTIALS' } });
       }
-      return res.json(result);
+      return res.json({ data: result, ...result });
     } catch (err) {
       return next(err);
     }

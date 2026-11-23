@@ -19,7 +19,12 @@ export function createOrganizationRouter(
       const identity = (req as any).identity;
       const org = await orgRepo.findById(identity.organizationId);
       if (!org) return res.status(404).json({ error: { code: 'NOT_FOUND' } });
-      return res.json({ organization: org, role: identity.role });
+      return res.json({
+        data: org,
+        organization: org,
+        role: identity.role,
+        membership: { role: identity.role },
+      });
     } catch (err) {
       return next(err);
     }
