@@ -33,6 +33,23 @@ export class OrganizationRepository {
     tokenHash: string;
     expiresAt: Date;
   }) {
+    if (this.db?.invitation?.upsert) {
+      return this.db.invitation.upsert({
+        where: {
+          organizationId_email: {
+            organizationId: data.organizationId,
+            email: data.email,
+          },
+        },
+        update: {
+          role: data.role as any,
+          tokenHash: data.tokenHash,
+          expiresAt: data.expiresAt,
+          acceptedAt: null,
+        },
+        create: data,
+      });
+    }
     return this.db.invitation.create({
       data,
     });

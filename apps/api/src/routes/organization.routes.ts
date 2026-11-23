@@ -34,7 +34,7 @@ export function createOrganizationRouter(
     try {
       const identity = (req as any).identity;
       const members = await orgRepo.listMembers(identity.organizationId);
-      return res.json(members);
+      return res.json({ data: members, members });
     } catch (err) {
       return next(err);
     }
@@ -82,8 +82,16 @@ export function createOrganizationRouter(
           expiresAt: new Date(Date.now() + 7 * 24 * 3600 * 1000),
         });
 
-        return res.status(201).json({ invitation, token: rawToken });
-      } catch (err) {
+        return res.status(201).json({
+          data: { ...invitation, invitationToken: rawToken },
+          invitation,
+          token: rawToken,
+          invitationToken: rawToken,
+        });
+      } catch (err: any) {
+        if (err?.code === 'P2002') {
+          return res.status(409).json({ error: { code: 'ALREADY_INVITED', message: 'An invitation has already been sent to this email' } });
+        }
         return next(err);
       }
     },
