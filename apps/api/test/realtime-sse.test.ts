@@ -42,10 +42,9 @@ describe('A07-R01: Server-Sent Events (SSE) Real-Time Updates', () => {
 
     it('authenticates via query parameter token for standard EventSource compatibility', async () => {
       broadcaster = new RealtimeBroadcaster({ heartbeatIntervalMs: 0 });
-      const app = createApp(
-        { NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET },
-        { events: broadcaster } as any,
-      );
+      const app = createApp({ NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET }, {
+        events: broadcaster,
+      } as any);
 
       const token = createToken({ userId: 'user-1', organizationId: 'org-1', role: 'MEMBER' });
 
@@ -147,9 +146,18 @@ describe('A07-R01: Server-Sent Events (SSE) Real-Time Updates', () => {
       broadcaster = new RealtimeBroadcaster({ heartbeatIntervalMs: 0 });
 
       // Publish 3 events to org-history buffer before client 2 connects
-      const evt1 = broadcaster.publish('org-history', { type: 'task.created', payload: { step: 1 } });
-      const evt2 = broadcaster.publish('org-history', { type: 'task.updated', payload: { step: 2 } });
-      const evt3 = broadcaster.publish('org-history', { type: 'task.updated', payload: { step: 3 } });
+      const evt1 = broadcaster.publish('org-history', {
+        type: 'task.created',
+        payload: { step: 1 },
+      });
+      const evt2 = broadcaster.publish('org-history', {
+        type: 'task.updated',
+        payload: { step: 2 },
+      });
+      const evt3 = broadcaster.publish('org-history', {
+        type: 'task.updated',
+        payload: { step: 3 },
+      });
 
       const replayed: string[] = [];
       const mockRes: any = {
@@ -174,7 +182,12 @@ describe('A07-R01: Server-Sent Events (SSE) Real-Time Updates', () => {
       const publishedEvents: any[] = [];
       vi.spyOn(broadcaster, 'publish').mockImplementation((orgId, input) => {
         publishedEvents.push({ orgId, ...input });
-        return { id: 'evt-test', organizationId: orgId, timestamp: new Date().toISOString(), ...input };
+        return {
+          id: 'evt-test',
+          organizationId: orgId,
+          timestamp: new Date().toISOString(),
+          ...input,
+        };
       });
 
       const mockDb = {
@@ -182,10 +195,21 @@ describe('A07-R01: Server-Sent Events (SSE) Real-Time Updates', () => {
           findFirst: vi.fn().mockResolvedValue({ id: 'proj-1', organizationId: 'org-test' }),
         },
         task: {
-          create: vi.fn().mockResolvedValue({ id: 'task-1', title: 'New Task', version: 1, projectId: 'proj-1' }),
-          findFirst: vi.fn().mockResolvedValue({ id: 'task-1', project: { organizationId: 'org-test' }, version: 1 }),
+          create: vi.fn().mockResolvedValue({
+            id: 'task-1',
+            title: 'New Task',
+            version: 1,
+            projectId: 'proj-1',
+          }),
+          findFirst: vi.fn().mockResolvedValue({
+            id: 'task-1',
+            project: { organizationId: 'org-test' },
+            version: 1,
+          }),
           updateMany: vi.fn().mockResolvedValue({ count: 1 }),
-          findUnique: vi.fn().mockResolvedValue({ id: 'task-1', title: 'Updated Title', version: 2 }),
+          findUnique: vi
+            .fn()
+            .mockResolvedValue({ id: 'task-1', title: 'Updated Title', version: 2 }),
         },
         activity: {
           create: vi.fn().mockResolvedValue({ id: 'act-1' }),
@@ -198,12 +222,16 @@ describe('A07-R01: Server-Sent Events (SSE) Real-Time Updates', () => {
         }),
       };
 
-      const app = createApp(
-        { NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET },
-        { database: mockDb as any, events: broadcaster } as any,
-      );
+      const app = createApp({ NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET }, {
+        database: mockDb as any,
+        events: broadcaster,
+      } as any);
 
-      const token = createToken({ userId: 'user-realtime', organizationId: 'org-test', role: 'MEMBER' });
+      const token = createToken({
+        userId: 'user-realtime',
+        organizationId: 'org-test',
+        role: 'MEMBER',
+      });
 
       // 1. Create task
       const createRes = await request(app)

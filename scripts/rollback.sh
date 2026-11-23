@@ -5,6 +5,13 @@
 
 set -euo pipefail
 
+if [ "${1:-}" = "--validate" ] || [ "${1:-}" = "--dry-run" ]; then
+  echo "Validating rollback script configuration..."
+  docker compose -f docker-compose.yml -f docker-compose.prod.yml config --quiet
+  echo "Rollback configuration syntax and compose overlay valid."
+  exit 0
+fi
+
 ENVIRONMENT="${1:-staging}"
 STATE_DIR=".deploy-state"
 STATE_FILE="${STATE_DIR}/current_deployment.env"

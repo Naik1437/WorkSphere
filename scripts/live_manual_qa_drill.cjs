@@ -75,7 +75,12 @@ async function run() {
   try {
     const res = await request({ hostname: 'localhost', port: 3000, path: '/', method: 'GET' });
     const ok = res.statusCode === 200 && res.data.includes('WorkSphere');
-    record('QA-01', 'Frontend App Root & HTML Delivery', ok, `HTTP ${res.statusCode}, length: ${res.data.length}`);
+    record(
+      'QA-01',
+      'Frontend App Root & HTML Delivery',
+      ok,
+      `HTTP ${res.statusCode}, length: ${res.data.length}`,
+    );
   } catch (e) {
     record('QA-01', 'Frontend App Root & HTML Delivery', false, e.message);
   }
@@ -98,7 +103,7 @@ async function run() {
         name: 'QA Lead',
         organizationName: 'QA Global Enterprise',
         organizationSlug: uniqueOrgSlug,
-      }
+      },
     );
     const token = res.json?.accessToken || res.json?.data?.accessToken;
     const ok = res.statusCode === 201 && Boolean(token);
@@ -107,7 +112,12 @@ async function run() {
       orgA_refreshToken = res.json.refreshToken || res.json.data?.refreshToken;
       orgA_id = res.json.organization?.id || res.json.data?.organization?.id;
     }
-    record('QA-02', 'User Registration & Tenant Creation', ok, `HTTP ${res.statusCode}, Org: ${uniqueOrgSlug}`);
+    record(
+      'QA-02',
+      'User Registration & Tenant Creation',
+      ok,
+      `HTTP ${res.statusCode}, Org: ${uniqueOrgSlug}`,
+    );
   } catch (e) {
     record('QA-02', 'User Registration & Tenant Creation', false, e.message);
   }
@@ -124,7 +134,7 @@ async function run() {
       {
         email: userA_email,
         password: userA_pass,
-      }
+      },
     );
     const ok = res.statusCode === 200 && Boolean(res.json?.accessToken);
     if (ok) {
@@ -132,7 +142,12 @@ async function run() {
       orgA_refreshToken = res.json.refreshToken || orgA_refreshToken;
       orgA_user = res.json.user?.id;
     }
-    record('QA-03', 'User Authentication (Login)', ok, `HTTP ${res.statusCode}, Token verified: ${Boolean(orgA_token)}`);
+    record(
+      'QA-03',
+      'User Authentication (Login)',
+      ok,
+      `HTTP ${res.statusCode}, Token verified: ${Boolean(orgA_token)}`,
+    );
   } catch (e) {
     record('QA-03', 'User Authentication (Login)', false, e.message);
   }
@@ -148,23 +163,38 @@ async function run() {
       },
       {
         refreshToken: orgA_refreshToken,
-      }
+      },
     );
     const ok = res.statusCode === 200 && Boolean(res.json?.accessToken);
     if (ok) {
       orgA_token = res.json.accessToken;
       orgA_refreshToken = res.json.refreshToken;
     }
-    record('QA-04', 'Token Refresh Endpoint Validation', ok, `HTTP ${res.statusCode}, New access token issued`);
+    record(
+      'QA-04',
+      'Token Refresh Endpoint Validation',
+      ok,
+      `HTTP ${res.statusCode}, New access token issued`,
+    );
   } catch (e) {
     record('QA-04', 'Token Refresh Endpoint Validation', false, e.message);
   }
 
   // 5. Unauthorized Access Protection
   try {
-    const res = await request({ hostname: 'localhost', port: 4000, path: '/api/v1/projects', method: 'GET' });
+    const res = await request({
+      hostname: 'localhost',
+      port: 4000,
+      path: '/api/v1/projects',
+      method: 'GET',
+    });
     const ok = res.statusCode === 401;
-    record('QA-05', 'Protected Routes Security (401 on missing token)', ok, `HTTP ${res.statusCode} UNAUTHORIZED`);
+    record(
+      'QA-05',
+      'Protected Routes Security (401 on missing token)',
+      ok,
+      `HTTP ${res.statusCode} UNAUTHORIZED`,
+    );
   } catch (e) {
     record('QA-05', 'Protected Routes Security', false, e.message);
   }
@@ -179,8 +209,15 @@ async function run() {
       headers: { Authorization: `Bearer ${orgA_token}` },
     });
     const org = res.json?.organization || res.json?.data;
-    const ok = res.statusCode === 200 && (org?.id === orgA_id || org?.slug === uniqueOrgSlug || Boolean(org?.name));
-    record('QA-06', 'Organization Context Retrieval', ok, `HTTP ${res.statusCode}, Org: ${org?.name}`);
+    const ok =
+      res.statusCode === 200 &&
+      (org?.id === orgA_id || org?.slug === uniqueOrgSlug || Boolean(org?.name));
+    record(
+      'QA-06',
+      'Organization Context Retrieval',
+      ok,
+      `HTTP ${res.statusCode}, Org: ${org?.name}`,
+    );
   } catch (e) {
     record('QA-06', 'Organization Context Retrieval', false, e.message);
   }
@@ -196,7 +233,7 @@ async function run() {
         method: 'POST',
         headers: { Authorization: `Bearer ${orgA_token}` },
       },
-      { name: 'Core Platform Engineering', description: 'Backend and Cloud team' }
+      { name: 'Core Platform Engineering', description: 'Backend and Cloud team' },
     );
     const ok = res.statusCode === 201 && res.json?.data?.id;
     if (ok) teamId = res.json.data.id;
@@ -233,7 +270,7 @@ async function run() {
       {
         name: 'WorkSphere Release 2.0',
         description: 'Next generation enterprise workspace delivery',
-      }
+      },
     );
     const ok = res.statusCode === 201 && res.json?.data?.id;
     if (ok) projectId = res.json.data.id;
@@ -252,7 +289,12 @@ async function run() {
       headers: { Authorization: `Bearer ${orgA_token}` },
     });
     const ok = res.statusCode === 200 && res.json?.data?.name === 'WorkSphere Release 2.0';
-    record('QA-10', 'Project Detail Retrieval', ok, `HTTP ${res.statusCode}, Name: ${res.json?.data?.name}`);
+    record(
+      'QA-10',
+      'Project Detail Retrieval',
+      ok,
+      `HTTP ${res.statusCode}, Name: ${res.json?.data?.name}`,
+    );
   } catch (e) {
     record('QA-10', 'Project Detail Retrieval', false, e.message);
   }
@@ -270,9 +312,12 @@ async function run() {
       {
         name: 'Milestone 1 - Core Services',
         dueAt: new Date(Date.now() + 86400000 * 7).toISOString(),
-      }
+      },
     );
-    const ok = res.statusCode === 201 && (res.json?.data?.title === 'Milestone 1 - Core Services' || res.json?.data?.name === 'Milestone 1 - Core Services');
+    const ok =
+      res.statusCode === 201 &&
+      (res.json?.data?.title === 'Milestone 1 - Core Services' ||
+        res.json?.data?.name === 'Milestone 1 - Core Services');
     record('QA-11', 'Project Milestone Creation', ok, `HTTP ${res.statusCode}`);
   } catch (e) {
     record('QA-11', 'Project Milestone Creation', false, e.message);
@@ -291,14 +336,19 @@ async function run() {
       {
         title: 'Implement Multi-Region Replication',
         description: 'Configure distributed read-replicas across availability zones',
-      }
+      },
     );
     const ok = res.statusCode === 201 && res.json?.data?.id;
     if (ok) {
       taskId = res.json.data.id;
       taskVersion = res.json.data.version || 1;
     }
-    record('QA-12', 'Task Creation', ok, `HTTP ${res.statusCode}, Task ID: ${taskId}, Version: ${taskVersion}`);
+    record(
+      'QA-12',
+      'Task Creation',
+      ok,
+      `HTTP ${res.statusCode}, Task ID: ${taskId}, Version: ${taskVersion}`,
+    );
   } catch (e) {
     record('QA-12', 'Task Creation', false, e.message);
   }
@@ -313,7 +363,7 @@ async function run() {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${orgA_token}` },
       },
-      { status: 'IN_PROGRESS', version: taskVersion }
+      { status: 'IN_PROGRESS', version: taskVersion },
     );
     const v2 = res1.json?.data?.version || taskVersion + 1;
 
@@ -325,10 +375,16 @@ async function run() {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${orgA_token}` },
       },
-      { status: 'DONE', version: v2 }
+      { status: 'DONE', version: v2 },
     );
-    const ok = res1.statusCode === 200 && res2.statusCode === 200 && res2.json?.data?.status === 'DONE';
-    record('QA-13', 'Task Status Transitions (IN_PROGRESS -> DONE)', ok, `HTTP ${res1.statusCode} -> ${res2.statusCode}, final status: ${res2.json?.data?.status}`);
+    const ok =
+      res1.statusCode === 200 && res2.statusCode === 200 && res2.json?.data?.status === 'DONE';
+    record(
+      'QA-13',
+      'Task Status Transitions (IN_PROGRESS -> DONE)',
+      ok,
+      `HTTP ${res1.statusCode} -> ${res2.statusCode}, final status: ${res2.json?.data?.status}`,
+    );
   } catch (e) {
     record('QA-13', 'Task Status Transitions', false, e.message);
   }
@@ -343,7 +399,7 @@ async function run() {
         method: 'POST',
         headers: { Authorization: `Bearer ${orgA_token}` },
       },
-      { title: 'Provision follower nodes' }
+      { title: 'Provision follower nodes' },
     );
     const listRes = await request({
       hostname: 'localhost',
@@ -352,8 +408,14 @@ async function run() {
       method: 'GET',
       headers: { Authorization: `Bearer ${orgA_token}` },
     });
-    const ok = res.statusCode === 201 && listRes.statusCode === 200 && Array.isArray(listRes.json?.data);
-    record('QA-14', 'Subtask Management (Create & List)', ok, `HTTP create: ${res.statusCode}, list: ${listRes.statusCode}, count: ${listRes.json?.data?.length}`);
+    const ok =
+      res.statusCode === 201 && listRes.statusCode === 200 && Array.isArray(listRes.json?.data);
+    record(
+      'QA-14',
+      'Subtask Management (Create & List)',
+      ok,
+      `HTTP create: ${res.statusCode}, list: ${listRes.statusCode}, count: ${listRes.json?.data?.length}`,
+    );
   } catch (e) {
     record('QA-14', 'Subtask Management', false, e.message);
   }
@@ -368,10 +430,18 @@ async function run() {
         method: 'POST',
         headers: { Authorization: `Bearer ${orgA_token}` },
       },
-      { content: 'Initial failover testing completed successfully in staging cluster.' }
+      { content: 'Initial failover testing completed successfully in staging cluster.' },
     );
-    const ok = res.statusCode === 201 && (res.json?.data?.content?.includes('staging cluster') || res.json?.data?.body?.includes('staging cluster'));
-    record('QA-15', 'Task Comments', ok, `HTTP ${res.statusCode}, comment id: ${res.json?.data?.id}`);
+    const ok =
+      res.statusCode === 201 &&
+      (res.json?.data?.content?.includes('staging cluster') ||
+        res.json?.data?.body?.includes('staging cluster'));
+    record(
+      'QA-15',
+      'Task Comments',
+      ok,
+      `HTTP ${res.statusCode}, comment id: ${res.json?.data?.id}`,
+    );
   } catch (e) {
     record('QA-15', 'Task Comments', false, e.message);
   }
@@ -386,7 +456,12 @@ async function run() {
       headers: { Authorization: `Bearer ${orgA_token}` },
     });
     const ok = res.statusCode === 200 && Array.isArray(res.json?.data);
-    record('QA-16', 'Task Activity Audit Trail', ok, `HTTP ${res.statusCode}, entries: ${res.json?.data?.length}`);
+    record(
+      'QA-16',
+      'Task Activity Audit Trail',
+      ok,
+      `HTTP ${res.statusCode}, entries: ${res.json?.data?.length}`,
+    );
   } catch (e) {
     record('QA-16', 'Task Activity Audit Trail', false, e.message);
   }
@@ -400,8 +475,16 @@ async function run() {
       method: 'GET',
       headers: { Authorization: `Bearer ${orgA_token}` },
     });
-    const ok = res.statusCode === 200 && res.data.includes('BEGIN:VCALENDAR') && res.data.includes('END:VCALENDAR');
-    record('QA-17', 'Calendar Export (.ics format)', ok, `HTTP ${res.statusCode}, contains VCALENDAR: ${ok}`);
+    const ok =
+      res.statusCode === 200 &&
+      res.data.includes('BEGIN:VCALENDAR') &&
+      res.data.includes('END:VCALENDAR');
+    record(
+      'QA-17',
+      'Calendar Export (.ics format)',
+      ok,
+      `HTTP ${res.statusCode}, contains VCALENDAR: ${ok}`,
+    );
   } catch (e) {
     record('QA-17', 'Calendar Export (.ics format)', false, e.message);
   }
@@ -420,11 +503,16 @@ async function run() {
         filename: 'architecture_diagram.png',
         contentType: 'image/png',
         sizeBytes: 1048576,
-      }
+      },
     );
     const ok = res.statusCode === 201 && res.json?.data?.id;
     if (ok) attachmentId = res.json.data.id;
-    record('QA-18', 'Attachment Upload & Metadata Creation', ok, `HTTP ${res.statusCode}, Attachment ID: ${attachmentId}`);
+    record(
+      'QA-18',
+      'Attachment Upload & Metadata Creation',
+      ok,
+      `HTTP ${res.statusCode}, Attachment ID: ${attachmentId}`,
+    );
   } catch (e) {
     record('QA-18', 'Attachment Upload & Metadata Creation', false, e.message);
   }
@@ -439,7 +527,12 @@ async function run() {
       headers: { Authorization: `Bearer ${orgA_token}` },
     });
     const ok = res.statusCode === 200 && Boolean(res.json?.data?.downloadUrl);
-    record('QA-19', 'Attachment Presigned Download URL', ok, `HTTP ${res.statusCode}, Download URL: ${res.json?.data?.downloadUrl?.slice(0, 45)}...`);
+    record(
+      'QA-19',
+      'Attachment Presigned Download URL',
+      ok,
+      `HTTP ${res.statusCode}, Download URL: ${res.json?.data?.downloadUrl?.slice(0, 45)}...`,
+    );
   } catch (e) {
     record('QA-19', 'Attachment Presigned Download URL', false, e.message);
   }
@@ -459,8 +552,14 @@ async function run() {
       path: '/health',
       method: 'GET',
     });
-    const ok = apiRes.statusCode === 200 && pyRes.statusCode === 200 && pyRes.json?.service === 'analytics';
-    record('QA-20', 'Analytics Microservice (API + FastAPI :8000)', ok, `API: HTTP ${apiRes.statusCode}, Python FastAPI: HTTP ${pyRes.statusCode} (${pyRes.json?.status})`);
+    const ok =
+      apiRes.statusCode === 200 && pyRes.statusCode === 200 && pyRes.json?.service === 'analytics';
+    record(
+      'QA-20',
+      'Analytics Microservice (API + FastAPI :8000)',
+      ok,
+      `API: HTTP ${apiRes.statusCode}, Python FastAPI: HTTP ${pyRes.statusCode} (${pyRes.json?.status})`,
+    );
   } catch (e) {
     record('QA-20', 'Analytics Microservice Integration', false, e.message);
   }
@@ -484,7 +583,7 @@ async function run() {
             sseReq.destroy();
             resolve(false);
           }
-        }
+        },
       );
       sseReq.on('error', () => resolve(false));
       sseReq.setTimeout(2000, () => {
@@ -493,37 +592,94 @@ async function run() {
       });
       sseReq.end();
     });
-    record('QA-21', 'Server-Sent Events (SSE) Real-time Stream', sseOk, `Event stream connection verified (text/event-stream)`);
+    record(
+      'QA-21',
+      'Server-Sent Events (SSE) Real-time Stream',
+      sseOk,
+      `Event stream connection verified (text/event-stream)`,
+    );
   } catch (e) {
     record('QA-21', 'Server-Sent Events (SSE) Real-time Stream', false, e.message);
   }
 
   // 22. System Health & Readiness Probes
   try {
-    const healthRes = await request({ hostname: 'localhost', port: 4000, path: '/health', method: 'GET' });
-    const readyRes = await request({ hostname: 'localhost', port: 4000, path: '/ready', method: 'GET' });
-    const ok = healthRes.statusCode === 200 && readyRes.statusCode === 200 && readyRes.json?.checks?.database === 'ok';
-    record('QA-22', 'System Health & Readiness Probes', ok, `Health: ${healthRes.json?.status}, Ready DB: ${readyRes.json?.checks?.database}, Redis: ${readyRes.json?.checks?.redis}`);
+    const healthRes = await request({
+      hostname: 'localhost',
+      port: 4000,
+      path: '/health',
+      method: 'GET',
+    });
+    const readyRes = await request({
+      hostname: 'localhost',
+      port: 4000,
+      path: '/ready',
+      method: 'GET',
+    });
+    const ok =
+      healthRes.statusCode === 200 &&
+      readyRes.statusCode === 200 &&
+      readyRes.json?.checks?.database === 'ok';
+    record(
+      'QA-22',
+      'System Health & Readiness Probes',
+      ok,
+      `Health: ${healthRes.json?.status}, Ready DB: ${readyRes.json?.checks?.database}, Redis: ${readyRes.json?.checks?.redis}`,
+    );
   } catch (e) {
     record('QA-22', 'System Health & Readiness Probes', false, e.message);
   }
 
   // 23. Metrics Telemetry (Prometheus & JSON)
   try {
-    const promRes = await request({ hostname: 'localhost', port: 4000, path: '/metrics', method: 'GET' });
-    const jsonRes = await request({ hostname: 'localhost', port: 4000, path: '/api/v1/metrics?format=json', method: 'GET' });
+    const promRes = await request({
+      hostname: 'localhost',
+      port: 4000,
+      path: '/metrics',
+      method: 'GET',
+    });
+    const jsonRes = await request({
+      hostname: 'localhost',
+      port: 4000,
+      path: '/api/v1/metrics?format=json',
+      method: 'GET',
+    });
     const ok = promRes.statusCode === 200 && jsonRes.statusCode === 200;
-    record('QA-23', 'Metrics Telemetry (Prometheus & JSON)', ok, `Prometheus HTTP ${promRes.statusCode}, JSON HTTP ${jsonRes.statusCode}`);
+    record(
+      'QA-23',
+      'Metrics Telemetry (Prometheus & JSON)',
+      ok,
+      `Prometheus HTTP ${promRes.statusCode}, JSON HTTP ${jsonRes.statusCode}`,
+    );
   } catch (e) {
     record('QA-23', 'Metrics Telemetry (Prometheus & JSON)', false, e.message);
   }
 
   // 24. OpenAPI & Swagger Documentation
   try {
-    const docsRes = await request({ hostname: 'localhost', port: 4000, path: '/docs', method: 'GET' });
-    const specRes = await request({ hostname: 'localhost', port: 4000, path: '/api/v1/openapi.json', method: 'GET' });
-    const ok = docsRes.statusCode === 200 && docsRes.data.includes('SwaggerUIBundle') && specRes.statusCode === 200 && Boolean(specRes.json?.openapi);
-    record('QA-24', 'OpenAPI 3.1 & Interactive Swagger UI', ok, `Swagger UI: HTTP ${docsRes.statusCode}, Spec Version: ${specRes.json?.openapi}`);
+    const docsRes = await request({
+      hostname: 'localhost',
+      port: 4000,
+      path: '/docs',
+      method: 'GET',
+    });
+    const specRes = await request({
+      hostname: 'localhost',
+      port: 4000,
+      path: '/api/v1/openapi.json',
+      method: 'GET',
+    });
+    const ok =
+      docsRes.statusCode === 200 &&
+      docsRes.data.includes('SwaggerUIBundle') &&
+      specRes.statusCode === 200 &&
+      Boolean(specRes.json?.openapi);
+    record(
+      'QA-24',
+      'OpenAPI 3.1 & Interactive Swagger UI',
+      ok,
+      `Swagger UI: HTTP ${docsRes.statusCode}, Spec Version: ${specRes.json?.openapi}`,
+    );
   } catch (e) {
     record('QA-24', 'OpenAPI 3.1 & Interactive Swagger UI', false, e.message);
   }
@@ -544,7 +700,7 @@ async function run() {
         name: 'Competitor Corp Lead',
         organizationName: 'Competitor Corp',
         organizationSlug: 'competitor-' + Date.now(),
-      }
+      },
     );
     orgB_token = bRes.json?.accessToken || bRes.json?.data?.accessToken;
 
@@ -558,7 +714,12 @@ async function run() {
     });
     // Expected: 404 NOT_FOUND (tenant isolation ensures no IDOR leakage)
     const ok = crossRes.statusCode === 404;
-    record('QA-25', 'Multi-Tenant Cross-Access Isolation', ok, `Tenant B probing Tenant A project returned HTTP ${crossRes.statusCode} (IDOR blocked)`);
+    record(
+      'QA-25',
+      'Multi-Tenant Cross-Access Isolation',
+      ok,
+      `Tenant B probing Tenant A project returned HTTP ${crossRes.statusCode} (IDOR blocked)`,
+    );
   } catch (e) {
     record('QA-25', 'Multi-Tenant Cross-Access Isolation', false, e.message);
   }

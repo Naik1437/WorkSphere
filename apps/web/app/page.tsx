@@ -67,7 +67,9 @@ export default function Home() {
   const [password, setPassword] = useState('');
   const [orgName, setOrgName] = useState('');
   const [orgSlug, setOrgSlug] = useState('');
-  const [currentOrg, setCurrentOrg] = useState<{ id: string; name: string; slug: string } | null>(null);
+  const [currentOrg, setCurrentOrg] = useState<{ id: string; name: string; slug: string } | null>(
+    null,
+  );
   const [userRole, setUserRole] = useState<Role | null>(null);
   const [manualTokenInput, setManualTokenInput] = useState('');
 
@@ -296,7 +298,10 @@ export default function Home() {
       }
       setActiveTab('board');
     } catch (error) {
-      showNotification(error instanceof Error ? error.message : 'Could not create project', 'error');
+      showNotification(
+        error instanceof Error ? error.message : 'Could not create project',
+        'error',
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -312,7 +317,10 @@ export default function Home() {
       setAnalytics(null);
       await loadProjects();
     } catch (error) {
-      showNotification(error instanceof Error ? error.message : 'Could not delete project', 'error');
+      showNotification(
+        error instanceof Error ? error.message : 'Could not delete project',
+        'error',
+      );
     }
   };
 
@@ -355,7 +363,10 @@ export default function Home() {
       await loadProjectAnalytics(selectedProject.id);
     } catch (error: any) {
       if (error?.message?.includes('conflict') || error?.message?.includes('VERSION_CONFLICT')) {
-        showNotification('Task concurrency conflict: The task was modified elsewhere. Refreshed.', 'error');
+        showNotification(
+          'Task concurrency conflict: The task was modified elsewhere. Refreshed.',
+          'error',
+        );
         await loadTasks(selectedProject.id);
       } else {
         showNotification(error instanceof Error ? error.message : 'Could not update task', 'error');
@@ -389,7 +400,10 @@ export default function Home() {
       showNotification('Milestone created.', 'success');
       await loadMilestones(selectedProject.id);
     } catch (error) {
-      showNotification(error instanceof Error ? error.message : 'Could not create milestone', 'error');
+      showNotification(
+        error instanceof Error ? error.message : 'Could not create milestone',
+        'error',
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -401,7 +415,10 @@ export default function Home() {
       setMembers(payload.data ?? []);
       showNotification(`Loaded ${(payload.data ?? []).length} team members.`, 'info');
     } catch (error) {
-      showNotification(error instanceof Error ? error.message : 'Could not load team members', 'error');
+      showNotification(
+        error instanceof Error ? error.message : 'Could not load team members',
+        'error',
+      );
     }
   };
 
@@ -532,12 +549,24 @@ export default function Home() {
             {/* Logo / Brand Header */}
             <div className="text-center mb-8">
               <div className="inline-flex items-center justify-center h-12 w-12 rounded-xl bg-gradient-to-tr from-cyan-600 to-sky-400 shadow-lg shadow-cyan-500/20 mb-3">
-                <svg className="w-6 h-6 text-slate-950" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                <svg
+                  className="w-6 h-6 text-slate-950"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2.5}
+                    d="M13 10V3L4 14h7v7l9-11h-7z"
+                  />
                 </svg>
               </div>
               <h1 className="text-2xl font-bold tracking-tight text-white">WorkSphere</h1>
-              <p className="text-xs text-slate-400 mt-1">Enterprise Project & Task Management Platform</p>
+              <p className="text-xs text-slate-400 mt-1">
+                Enterprise Project & Task Management Platform
+              </p>
             </div>
 
             {/* Auth Card */}
@@ -573,7 +602,10 @@ export default function Home() {
                 {authMode === 'register' && (
                   <>
                     <div>
-                      <label className="block text-xs font-medium text-slate-300 mb-1" htmlFor="auth-org-name">
+                      <label
+                        className="block text-xs font-medium text-slate-300 mb-1"
+                        htmlFor="auth-org-name"
+                      >
                         Organization Name
                       </label>
                       <input
@@ -586,7 +618,10 @@ export default function Home() {
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-slate-300 mb-1" htmlFor="auth-org-slug">
+                      <label
+                        className="block text-xs font-medium text-slate-300 mb-1"
+                        htmlFor="auth-org-slug"
+                      >
                         Organization Slug
                       </label>
                       <input
@@ -598,13 +633,18 @@ export default function Home() {
                         placeholder="acme-corp"
                         className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100 placeholder-slate-600 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 focus:outline-none transition"
                       />
-                      <span className="text-[10px] text-slate-500 mt-1 block">Lowercase alphanumeric with hyphens (min 3 chars).</span>
+                      <span className="text-[10px] text-slate-500 mt-1 block">
+                        Lowercase alphanumeric with hyphens (min 3 chars).
+                      </span>
                     </div>
                   </>
                 )}
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1" htmlFor="auth-email">
+                  <label
+                    className="block text-xs font-medium text-slate-300 mb-1"
+                    htmlFor="auth-email"
+                  >
                     Email Address
                   </label>
                   <input
@@ -619,7 +659,10 @@ export default function Home() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1" htmlFor="auth-password">
+                  <label
+                    className="block text-xs font-medium text-slate-300 mb-1"
+                    htmlFor="auth-password"
+                  >
                     Password
                   </label>
                   <input
@@ -639,7 +682,11 @@ export default function Home() {
                   disabled={isSubmitting}
                   className="w-full mt-2 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold py-2.5 text-sm transition-colors shadow-md shadow-cyan-500/20 disabled:opacity-50"
                 >
-                  {isSubmitting ? 'Authenticating...' : authMode === 'login' ? 'Sign In to Workspace' : 'Create Organization Account'}
+                  {isSubmitting
+                    ? 'Authenticating...'
+                    : authMode === 'login'
+                      ? 'Sign In to Workspace'
+                      : 'Create Organization Account'}
                 </button>
               </form>
 
@@ -648,7 +695,9 @@ export default function Home() {
                 <details className="text-xs text-slate-400 group">
                   <summary className="cursor-pointer font-medium hover:text-slate-300 list-none flex items-center justify-between">
                     <span>Developer / Manual Token Sign-in</span>
-                    <span className="text-[10px] text-slate-500 group-open:rotate-180 transition-transform">▼</span>
+                    <span className="text-[10px] text-slate-500 group-open:rotate-180 transition-transform">
+                      ▼
+                    </span>
                   </summary>
                   <div className="mt-3 space-y-2">
                     <input
@@ -734,7 +783,12 @@ export default function Home() {
                 }`}
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                  />
                 </svg>
                 Task Board
               </button>
@@ -752,7 +806,12 @@ export default function Home() {
                 }`}
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+                  />
                 </svg>
                 Projects ({projects.length})
               </button>
@@ -770,7 +829,12 @@ export default function Home() {
                 }`}
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"
+                  />
                 </svg>
                 Milestones
               </button>
@@ -789,7 +853,12 @@ export default function Home() {
                 }`}
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+                  />
                 </svg>
                 Team & Members
               </button>
@@ -808,7 +877,12 @@ export default function Home() {
                 }`}
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                  />
                 </svg>
                 Analytics Engine
               </button>
@@ -816,7 +890,10 @@ export default function Home() {
 
             {/* Active Project Switcher in Sidebar */}
             <div className="p-3 border-t border-slate-800">
-              <label htmlFor="sidebar-project-select" className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+              <label
+                htmlFor="sidebar-project-select"
+                className="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1"
+              >
                 Active Project
               </label>
               <select
@@ -864,16 +941,25 @@ export default function Home() {
                   aria-label="Open sidebar"
                 >
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 6h16M4 12h16M4 18h16"
+                    />
                   </svg>
                 </button>
                 {/* Breadcrumbs */}
                 <div className="flex items-center gap-2 text-xs">
                   <span className="text-slate-400 font-medium">WorkSphere</span>
                   <span className="text-slate-600">/</span>
-                  <span className="text-slate-300 font-medium">{currentOrg ? currentOrg.name : 'Org'}</span>
+                  <span className="text-slate-300 font-medium">
+                    {currentOrg ? currentOrg.name : 'Org'}
+                  </span>
                   <span className="text-slate-600">/</span>
-                  <span className="text-cyan-400 font-semibold">{selectedProject ? selectedProject.name : 'Select Project'}</span>
+                  <span className="text-cyan-400 font-semibold">
+                    {selectedProject ? selectedProject.name : 'Select Project'}
+                  </span>
                 </div>
               </div>
 
@@ -895,9 +981,12 @@ export default function Home() {
                   {selectedProject ? (
                     <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       <div>
-                        <h1 className="text-xl font-bold text-white tracking-tight">{selectedProject.name}</h1>
+                        <h1 className="text-xl font-bold text-white tracking-tight">
+                          {selectedProject.name}
+                        </h1>
                         <p className="text-xs text-slate-400 mt-1">
-                          {selectedProject.description || 'No description provided for this project.'}
+                          {selectedProject.description ||
+                            'No description provided for this project.'}
                         </p>
                       </div>
                       <div className="flex items-center gap-2">
@@ -923,7 +1012,8 @@ export default function Home() {
                     <div className="bg-slate-900/40 border border-dashed border-slate-800 rounded-2xl p-8 text-center">
                       <p className="text-sm font-semibold text-slate-300">No project selected</p>
                       <p className="text-xs text-slate-500 mt-1">
-                        Select a project from the sidebar or create one in the Projects tab to begin.
+                        Select a project from the sidebar or create one in the Projects tab to
+                        begin.
                       </p>
                       <button
                         type="button"
@@ -942,9 +1032,14 @@ export default function Home() {
                         <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
                           Create New Task
                         </h2>
-                        <form onSubmit={handleCreateTask} className="grid grid-cols-1 sm:grid-cols-12 gap-3">
+                        <form
+                          onSubmit={handleCreateTask}
+                          className="grid grid-cols-1 sm:grid-cols-12 gap-3"
+                        >
                           <div className="sm:col-span-5">
-                            <label htmlFor="task-title" className="sr-only">Task Title</label>
+                            <label htmlFor="task-title" className="sr-only">
+                              Task Title
+                            </label>
                             <input
                               id="task-title"
                               required
@@ -955,7 +1050,9 @@ export default function Home() {
                             />
                           </div>
                           <div className="sm:col-span-4">
-                            <label htmlFor="task-desc" className="sr-only">Description</label>
+                            <label htmlFor="task-desc" className="sr-only">
+                              Description
+                            </label>
                             <input
                               id="task-desc"
                               value={newTaskDesc}
@@ -965,7 +1062,9 @@ export default function Home() {
                             />
                           </div>
                           <div className="sm:col-span-2">
-                            <label htmlFor="task-initial-status" className="sr-only">Status</label>
+                            <label htmlFor="task-initial-status" className="sr-only">
+                              Status
+                            </label>
                             <select
                               id="task-initial-status"
                               value={newTaskStatus}
@@ -994,22 +1093,24 @@ export default function Home() {
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-900/40 p-3 rounded-xl border border-slate-800">
                         {/* Status Filter Pills */}
                         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
-                          {(['ALL', 'TODO', 'IN_PROGRESS', 'BLOCKED', 'DONE'] as const).map((filter) => (
-                            <button
-                              key={filter}
-                              type="button"
-                              onClick={() => setStatusFilter(filter)}
-                              className={`px-3 py-1 rounded-lg text-xs font-medium transition whitespace-nowrap ${
-                                statusFilter === filter
-                                  ? 'bg-cyan-500 text-slate-950 font-bold'
-                                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
-                              }`}
-                            >
-                              {filter === 'ALL'
-                                ? `All (${tasks.length})`
-                                : `${statusConfig[filter].label} (${tasks.filter((t) => t.status === filter).length})`}
-                            </button>
-                          ))}
+                          {(['ALL', 'TODO', 'IN_PROGRESS', 'BLOCKED', 'DONE'] as const).map(
+                            (filter) => (
+                              <button
+                                key={filter}
+                                type="button"
+                                onClick={() => setStatusFilter(filter)}
+                                className={`px-3 py-1 rounded-lg text-xs font-medium transition whitespace-nowrap ${
+                                  statusFilter === filter
+                                    ? 'bg-cyan-500 text-slate-950 font-bold'
+                                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+                                }`}
+                              >
+                                {filter === 'ALL'
+                                  ? `All (${tasks.length})`
+                                  : `${statusConfig[filter].label} (${tasks.filter((t) => t.status === filter).length})`}
+                              </button>
+                            ),
+                          )}
                         </div>
 
                         {/* Search Input */}
@@ -1042,7 +1143,9 @@ export default function Home() {
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                               <div className="flex-1">
                                 <div className="flex items-center gap-2 flex-wrap">
-                                  <h3 className="text-sm font-semibold text-slate-100">{t.title}</h3>
+                                  <h3 className="text-sm font-semibold text-slate-100">
+                                    {t.title}
+                                  </h3>
                                   <span
                                     className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${statusConfig[t.status].badge}`}
                                   >
@@ -1063,7 +1166,9 @@ export default function Home() {
                                 <select
                                   aria-label="Change status"
                                   value={t.status}
-                                  onChange={(e) => handleUpdateTaskStatus(t, e.target.value as TaskStatus)}
+                                  onChange={(e) =>
+                                    handleUpdateTaskStatus(t, e.target.value as TaskStatus)
+                                  }
                                   className="rounded-lg border border-slate-700 bg-slate-950 px-2 py-1 text-xs text-slate-200 focus:border-cyan-500 focus:outline-none"
                                 >
                                   <option value="TODO">To Do</option>
@@ -1118,14 +1223,21 @@ export default function Home() {
                 <div className="space-y-6">
                   {/* Header & Create Project Card */}
                   <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-6">
-                    <h2 className="text-lg font-bold text-white tracking-tight">Organization Projects</h2>
+                    <h2 className="text-lg font-bold text-white tracking-tight">
+                      Organization Projects
+                    </h2>
                     <p className="text-xs text-slate-400 mt-1">
                       Create and organize distinct project workspaces for your teams and workflows.
                     </p>
 
-                    <form onSubmit={handleCreateProject} className="mt-5 grid grid-cols-1 sm:grid-cols-12 gap-3">
+                    <form
+                      onSubmit={handleCreateProject}
+                      className="mt-5 grid grid-cols-1 sm:grid-cols-12 gap-3"
+                    >
                       <div className="sm:col-span-5">
-                        <label htmlFor="create-project-name" className="sr-only">Project Name</label>
+                        <label htmlFor="create-project-name" className="sr-only">
+                          Project Name
+                        </label>
                         <input
                           id="create-project-name"
                           required
@@ -1136,7 +1248,9 @@ export default function Home() {
                         />
                       </div>
                       <div className="sm:col-span-5">
-                        <label htmlFor="create-project-desc" className="sr-only">Description</label>
+                        <label htmlFor="create-project-desc" className="sr-only">
+                          Description
+                        </label>
                         <input
                           id="create-project-desc"
                           value={newProjectDesc}
@@ -1217,7 +1331,9 @@ export default function Home() {
 
                     {projects.length === 0 && (
                       <div className="col-span-full rounded-2xl border border-dashed border-slate-800 p-10 text-center">
-                        <p className="text-xs text-slate-400">No projects yet in this organization.</p>
+                        <p className="text-xs text-slate-400">
+                          No projects yet in this organization.
+                        </p>
                       </div>
                     )}
                   </div>
@@ -1237,7 +1353,9 @@ export default function Home() {
 
                     {selectedProject ? (
                       <form onSubmit={handleCreateMilestone} className="mt-5 flex gap-3 max-w-md">
-                        <label htmlFor="create-milestone-name" className="sr-only">Milestone Name</label>
+                        <label htmlFor="create-milestone-name" className="sr-only">
+                          Milestone Name
+                        </label>
                         <input
                           id="create-milestone-name"
                           required
@@ -1255,7 +1373,9 @@ export default function Home() {
                         </button>
                       </form>
                     ) : (
-                      <p className="text-xs text-amber-400 mt-3">Please select a project first to view milestones.</p>
+                      <p className="text-xs text-amber-400 mt-3">
+                        Please select a project first to view milestones.
+                      </p>
                     )}
                   </div>
 
@@ -1273,7 +1393,8 @@ export default function Home() {
                           <div>
                             <h4 className="text-sm font-semibold text-white">{m.name}</h4>
                             <p className="text-[11px] text-slate-500">
-                              Target Date: {m.dueAt ? new Date(m.dueAt).toLocaleDateString() : 'Continuous'}
+                              Target Date:{' '}
+                              {m.dueAt ? new Date(m.dueAt).toLocaleDateString() : 'Continuous'}
                             </p>
                           </div>
                         </div>
@@ -1285,7 +1406,9 @@ export default function Home() {
 
                     {milestones.length === 0 && selectedProject && (
                       <div className="rounded-2xl border border-dashed border-slate-800 p-8 text-center">
-                        <p className="text-xs text-slate-500">No milestones recorded yet for this project.</p>
+                        <p className="text-xs text-slate-500">
+                          No milestones recorded yet for this project.
+                        </p>
                       </div>
                     )}
                   </div>
@@ -1298,14 +1421,21 @@ export default function Home() {
                   {/* Invitation Section */}
                   {['OWNER', 'MANAGER'].includes(userRole ?? '') && (
                     <div className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-6">
-                      <h2 className="text-lg font-bold text-white tracking-tight">Invite Team Member</h2>
+                      <h2 className="text-lg font-bold text-white tracking-tight">
+                        Invite Team Member
+                      </h2>
                       <p className="text-xs text-slate-400 mt-1">
                         Send an invitation token to a teammate to join this organization workspace.
                       </p>
 
-                      <form onSubmit={handleInviteMember} className="mt-4 grid grid-cols-1 sm:grid-cols-12 gap-3 max-w-xl">
+                      <form
+                        onSubmit={handleInviteMember}
+                        className="mt-4 grid grid-cols-1 sm:grid-cols-12 gap-3 max-w-xl"
+                      >
                         <div className="sm:col-span-7">
-                          <label htmlFor="invite-member-email" className="sr-only">Email Address</label>
+                          <label htmlFor="invite-member-email" className="sr-only">
+                            Email Address
+                          </label>
                           <input
                             id="invite-member-email"
                             type="email"
@@ -1317,7 +1447,9 @@ export default function Home() {
                           />
                         </div>
                         <div className="sm:col-span-3">
-                          <label htmlFor="invite-member-role" className="sr-only">Role</label>
+                          <label htmlFor="invite-member-role" className="sr-only">
+                            Role
+                          </label>
                           <select
                             id="invite-member-role"
                             value={inviteRole}
@@ -1361,7 +1493,9 @@ export default function Home() {
                     <div className="flex items-center justify-between mb-4">
                       <div>
                         <h3 className="text-base font-bold text-white">Active Members</h3>
-                        <p className="text-xs text-slate-400">Current users assigned to this workspace</p>
+                        <p className="text-xs text-slate-400">
+                          Current users assigned to this workspace
+                        </p>
                       </div>
                       <button
                         type="button"
@@ -1381,7 +1515,9 @@ export default function Home() {
                             </div>
                             <div>
                               <p className="text-xs font-semibold text-slate-200">{m.user.email}</p>
-                              <p className="text-[10px] text-slate-500 font-mono">ID: {m.user.id.slice(0, 8)}...</p>
+                              <p className="text-[10px] text-slate-500 font-mono">
+                                ID: {m.user.id.slice(0, 8)}...
+                              </p>
                             </div>
                           </div>
                           <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-800 text-cyan-400 uppercase tracking-wider border border-slate-700">
@@ -1432,32 +1568,48 @@ export default function Home() {
                       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                         <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5">
                           <span className="text-xs font-medium text-slate-400">Total Workload</span>
-                          <p className="text-2xl font-black text-white mt-2">{analytics.total_tasks}</p>
-                          <span className="text-[10px] text-slate-500 mt-1 block">Tracked project items</span>
+                          <p className="text-2xl font-black text-white mt-2">
+                            {analytics.total_tasks}
+                          </p>
+                          <span className="text-[10px] text-slate-500 mt-1 block">
+                            Tracked project items
+                          </span>
                         </div>
 
                         <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5">
-                          <span className="text-xs font-medium text-slate-400">Completion Rate</span>
+                          <span className="text-xs font-medium text-slate-400">
+                            Completion Rate
+                          </span>
                           <p className="text-2xl font-black text-emerald-400 mt-2">
                             {Math.round(analytics.completion_rate * 100)}%
                           </p>
-                          <span className="text-[10px] text-slate-500 mt-1 block">Completed vs total</span>
+                          <span className="text-[10px] text-slate-500 mt-1 block">
+                            Completed vs total
+                          </span>
                         </div>
 
                         <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5">
-                          <span className="text-xs font-medium text-slate-400">Estimated Effort</span>
+                          <span className="text-xs font-medium text-slate-400">
+                            Estimated Effort
+                          </span>
                           <p className="text-2xl font-black text-cyan-300 mt-2">
                             {analytics.estimated_hours}h
                           </p>
-                          <span className="text-[10px] text-slate-500 mt-1 block">Hours remaining</span>
+                          <span className="text-[10px] text-slate-500 mt-1 block">
+                            Hours remaining
+                          </span>
                         </div>
 
                         <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5">
                           <span className="text-xs font-medium text-slate-400">Avg Cycle Time</span>
                           <p className="text-2xl font-black text-amber-300 mt-2">
-                            {analytics.average_cycle_days !== null ? `${analytics.average_cycle_days}d` : 'N/A'}
+                            {analytics.average_cycle_days !== null
+                              ? `${analytics.average_cycle_days}d`
+                              : 'N/A'}
                           </p>
-                          <span className="text-[10px] text-slate-500 mt-1 block">Days from creation to done</span>
+                          <span className="text-[10px] text-slate-500 mt-1 block">
+                            Days from creation to done
+                          </span>
                         </div>
                       </div>
 
@@ -1549,8 +1701,13 @@ export default function Home() {
                 </div>
 
                 {/* Add Comment Form */}
-                <form onSubmit={handleAddComment} className="pt-3 border-t border-slate-800 flex gap-2">
-                  <label htmlFor="modal-comment-input" className="sr-only">Comment</label>
+                <form
+                  onSubmit={handleAddComment}
+                  className="pt-3 border-t border-slate-800 flex gap-2"
+                >
+                  <label htmlFor="modal-comment-input" className="sr-only">
+                    Comment
+                  </label>
                   <input
                     id="modal-comment-input"
                     value={newComment}

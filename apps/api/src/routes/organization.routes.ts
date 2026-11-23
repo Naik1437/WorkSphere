@@ -69,7 +69,9 @@ export function createOrganizationRouter(
         });
         const input = schema.safeParse(req.body);
         if (!input.success) {
-          return res.status(400).json({ error: { code: 'INVALID_INPUT', details: input.error.errors } });
+          return res
+            .status(400)
+            .json({ error: { code: 'INVALID_INPUT', details: input.error.errors } });
         }
 
         const identity = (req as any).identity;
@@ -90,7 +92,12 @@ export function createOrganizationRouter(
         });
       } catch (err: any) {
         if (err?.code === 'P2002') {
-          return res.status(409).json({ error: { code: 'ALREADY_INVITED', message: 'An invitation has already been sent to this email' } });
+          return res.status(409).json({
+            error: {
+              code: 'ALREADY_INVITED',
+              message: 'An invitation has already been sent to this email',
+            },
+          });
         }
         return next(err);
       }
@@ -102,7 +109,9 @@ export function createOrganizationRouter(
       const schema = z.object({ token: z.string().min(1) });
       const input = schema.safeParse(req.body);
       if (!input.success) {
-        return res.status(400).json({ error: { code: 'INVALID_INPUT', details: input.error.errors } });
+        return res
+          .status(400)
+          .json({ error: { code: 'INVALID_INPUT', details: input.error.errors } });
       }
 
       const invitation = await orgRepo.findInvitationByHash(tokenHash(input.data.token));

@@ -43,10 +43,22 @@ describe('Task 20: Storage, Billing, and Email Integrations', () => {
   const attachmentId = 'att-1111-1111-1111-111111111111';
 
   const ownerToken = createToken({ userId: userAlpha, organizationId: orgAlpha, role: 'OWNER' });
-  const managerToken = createToken({ userId: userAlpha, organizationId: orgAlpha, role: 'MANAGER' });
+  const managerToken = createToken({
+    userId: userAlpha,
+    organizationId: orgAlpha,
+    role: 'MANAGER',
+  });
   const memberToken = createToken({ userId: userAlpha, organizationId: orgAlpha, role: 'MEMBER' });
-  const auditorToken = createToken({ userId: userAlpha, organizationId: orgAlpha, role: 'AUDITOR' });
-  const crossTenantToken = createToken({ userId: userAlpha, organizationId: orgBeta, role: 'OWNER' });
+  const auditorToken = createToken({
+    userId: userAlpha,
+    organizationId: orgAlpha,
+    role: 'AUDITOR',
+  });
+  const crossTenantToken = createToken({
+    userId: userAlpha,
+    organizationId: orgBeta,
+    role: 'OWNER',
+  });
 
   // =========================================================================
   // PART 1: S3 / MinIO Object Storage Integration (A08-R02)
@@ -72,7 +84,9 @@ describe('Task 20: Storage, Billing, and Email Integrations', () => {
         forcePathStyle: true,
       });
 
-      expect(presigned).toContain('http://minio:9000/worksphere-attachments/tenants/org-1/tasks/task-1/file.pdf');
+      expect(presigned).toContain(
+        'http://minio:9000/worksphere-attachments/tenants/org-1/tasks/task-1/file.pdf',
+      );
       expect(presigned).toContain('X-Amz-Algorithm=AWS4-HMAC-SHA256');
       expect(presigned).toContain('X-Amz-Credential=minioadmin%2F');
       expect(presigned).toContain('X-Amz-Expires=600');
@@ -92,7 +106,9 @@ describe('Task 20: Storage, Billing, and Email Integrations', () => {
         forcePathStyle: false,
       });
 
-      expect(presigned).toContain('https://my-bucket.s3.amazonaws.com/tenants/org-1/tasks/task-1/doc.docx');
+      expect(presigned).toContain(
+        'https://my-bucket.s3.amazonaws.com/tenants/org-1/tasks/task-1/doc.docx',
+      );
       expect(presigned).toContain('X-Amz-Expires=300');
     });
 
@@ -178,7 +194,11 @@ describe('Task 20: Storage, Billing, and Email Integrations', () => {
 
         const app = createApp(
           { NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET },
-          { databasePing: async () => undefined, redisPing: async () => undefined, database: mockDb },
+          {
+            databasePing: async () => undefined,
+            redisPing: async () => undefined,
+            database: mockDb,
+          },
         );
 
         const res = await request(app)
@@ -205,7 +225,11 @@ describe('Task 20: Storage, Billing, and Email Integrations', () => {
 
         const app = createApp(
           { NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET },
-          { databasePing: async () => undefined, redisPing: async () => undefined, database: mockDb },
+          {
+            databasePing: async () => undefined,
+            redisPing: async () => undefined,
+            database: mockDb,
+          },
         );
 
         const res = await request(app)
@@ -225,7 +249,11 @@ describe('Task 20: Storage, Billing, and Email Integrations', () => {
 
         const app = createApp(
           { NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET },
-          { databasePing: async () => undefined, redisPing: async () => undefined, database: mockDb },
+          {
+            databasePing: async () => undefined,
+            redisPing: async () => undefined,
+            database: mockDb,
+          },
         );
 
         const res = await request(app)
@@ -248,7 +276,11 @@ describe('Task 20: Storage, Billing, and Email Integrations', () => {
 
         const app = createApp(
           { NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET },
-          { databasePing: async () => undefined, redisPing: async () => undefined, database: mockDb },
+          {
+            databasePing: async () => undefined,
+            redisPing: async () => undefined,
+            database: mockDb,
+          },
         );
 
         const res = await request(app)
@@ -267,7 +299,11 @@ describe('Task 20: Storage, Billing, and Email Integrations', () => {
 
         const app = createApp(
           { NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET },
-          { databasePing: async () => undefined, redisPing: async () => undefined, database: mockDb },
+          {
+            databasePing: async () => undefined,
+            redisPing: async () => undefined,
+            database: mockDb,
+          },
         );
 
         const res = await request(app)
@@ -285,7 +321,11 @@ describe('Task 20: Storage, Billing, and Email Integrations', () => {
   describe('Billing Scope & Sandbox Integration (A08-R06)', () => {
     const webhookSecret = 'whsec_test_secret_for_unit_tests_123456';
 
-    function signStripePayload(payload: string, secret: string, timestamp = Math.floor(Date.now() / 1000)) {
+    function signStripePayload(
+      payload: string,
+      secret: string,
+      timestamp = Math.floor(Date.now() / 1000),
+    ) {
       const signedPayload = `${timestamp}.${payload}`;
       const sig = createHmac('sha256', secret).update(signedPayload).digest('hex');
       return `t=${timestamp},v1=${sig}`;
@@ -352,7 +392,11 @@ describe('Task 20: Storage, Billing, and Email Integrations', () => {
         const mockDb = { user: { findUnique: vi.fn() } };
         const app = createApp(
           { NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET },
-          { databasePing: async () => undefined, redisPing: async () => undefined, database: mockDb },
+          {
+            databasePing: async () => undefined,
+            redisPing: async () => undefined,
+            database: mockDb,
+          },
         );
 
         const res = await request(app)
@@ -369,7 +413,11 @@ describe('Task 20: Storage, Billing, and Email Integrations', () => {
         const mockDb = { user: { findUnique: vi.fn() } };
         const app = createApp(
           { NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET },
-          { databasePing: async () => undefined, redisPing: async () => undefined, database: mockDb },
+          {
+            databasePing: async () => undefined,
+            redisPing: async () => undefined,
+            database: mockDb,
+          },
         );
 
         const res = await request(app)
@@ -396,7 +444,11 @@ describe('Task 20: Storage, Billing, and Email Integrations', () => {
 
         const app = createApp(
           { NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET },
-          { databasePing: async () => undefined, redisPing: async () => undefined, database: mockDb },
+          {
+            databasePing: async () => undefined,
+            redisPing: async () => undefined,
+            database: mockDb,
+          },
         );
 
         const res = await request(app)
@@ -417,7 +469,9 @@ describe('Task 20: Storage, Billing, and Email Integrations', () => {
         });
         const header = signStripePayload(payload, 'whsec_test_mock_secret_for_worksphere');
 
-        const p2002Error = new Error('Unique constraint failed on the fields: (`provider`,`external_id`)');
+        const p2002Error = new Error(
+          'Unique constraint failed on the fields: (`provider`,`external_id`)',
+        );
         (p2002Error as any).code = 'P2002';
 
         const mockDb = {
@@ -428,7 +482,11 @@ describe('Task 20: Storage, Billing, and Email Integrations', () => {
 
         const app = createApp(
           { NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET },
-          { databasePing: async () => undefined, redisPing: async () => undefined, database: mockDb },
+          {
+            databasePing: async () => undefined,
+            redisPing: async () => undefined,
+            database: mockDb,
+          },
         );
 
         const res = await request(app)
@@ -521,8 +579,12 @@ describe('Task 20: Storage, Billing, and Email Integrations', () => {
         });
 
         expect(receivedCommands.some((c) => c.startsWith('EHLO'))).toBe(true);
-        expect(receivedCommands.some((c) => c.includes('MAIL FROM:<system@worksphere.local>'))).toBe(true);
-        expect(receivedCommands.some((c) => c.includes('RCPT TO:<alert@worksphere.local>'))).toBe(true);
+        expect(
+          receivedCommands.some((c) => c.includes('MAIL FROM:<system@worksphere.local>')),
+        ).toBe(true);
+        expect(receivedCommands.some((c) => c.includes('RCPT TO:<alert@worksphere.local>'))).toBe(
+          true,
+        );
         expect(receivedCommands.some((c) => c.startsWith('DATA'))).toBe(true);
         expect(receivedCommands.some((c) => c.startsWith('QUIT'))).toBe(true);
       } finally {

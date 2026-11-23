@@ -105,7 +105,12 @@ export class MetricsCollector {
     this.inFlight++;
   }
 
-  public recordRequestEnd(method: string, _path: string, statusCode: number, durationMs: number): void {
+  public recordRequestEnd(
+    method: string,
+    _path: string,
+    statusCode: number,
+    durationMs: number,
+  ): void {
     if (this.inFlight > 0) {
       this.inFlight--;
     }
@@ -157,10 +162,7 @@ export class MetricsCollector {
 
     const sorted = [...this.latencySamples].sort((a, b) => a - b);
     const getPercentile = (p: number) => {
-      const idx = Math.min(
-        Math.floor((p / 100) * sorted.length),
-        sorted.length - 1,
-      );
+      const idx = Math.min(Math.floor((p / 100) * sorted.length), sorted.length - 1);
       return sorted[idx] ?? 0;
     };
 
@@ -175,9 +177,7 @@ export class MetricsCollector {
     const memory = process.memoryUsage();
     const percentiles = this.calculatePercentiles();
     const avgLatency =
-      this.totalRequests > 0
-        ? Math.round((this.latencySum / this.totalRequests) * 100) / 100
-        : 0;
+      this.totalRequests > 0 ? Math.round((this.latencySum / this.totalRequests) * 100) / 100 : 0;
     const errorRate =
       this.totalRequests > 0
         ? Math.round((this.totalErrors / this.totalRequests) * 10000) / 100
@@ -353,7 +353,9 @@ export class MetricsCollector {
 
     // Realtime
     if (snapshot.realtime !== undefined) {
-      lines.push('# HELP worksphere_realtime_connections Active Server-Sent Event client connections');
+      lines.push(
+        '# HELP worksphere_realtime_connections Active Server-Sent Event client connections',
+      );
       lines.push('# TYPE worksphere_realtime_connections gauge');
       lines.push(`worksphere_realtime_connections ${snapshot.realtime.activeConnections}`);
     }

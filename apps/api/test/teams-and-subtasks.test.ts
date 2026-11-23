@@ -29,9 +29,11 @@ describe('Teams API & Subtasks hierarchy', () => {
   it('lists teams scoped to active organization', async () => {
     const mockDb = {
       team: {
-        findMany: vi.fn().mockResolvedValue([
-          { id: 'team-1', organizationId: orgId, name: 'Platform Engineering', members: [] },
-        ]),
+        findMany: vi
+          .fn()
+          .mockResolvedValue([
+            { id: 'team-1', organizationId: orgId, name: 'Platform Engineering', members: [] },
+          ]),
       },
     };
     const app = createApp(

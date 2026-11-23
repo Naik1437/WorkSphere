@@ -31,7 +31,11 @@ export class ProjectRepository {
     });
   }
 
-  public async update(id: string, organizationId: string, data: { name?: string; description?: string }) {
+  public async update(
+    id: string,
+    organizationId: string,
+    data: { name?: string; description?: string },
+  ) {
     return this.db.project.update({
       where: { id },
       data,

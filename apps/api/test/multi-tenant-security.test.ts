@@ -21,11 +21,23 @@ describe('A12-R06: Multi-Tenant Security & Penetration Testing', () => {
   const orgBeta = { id: 'org-beta', name: 'Beta Ltd' };
 
   const userAlphaOwner = { userId: 'user-alpha-owner', organizationId: orgAlpha.id, role: 'OWNER' };
-  const userAlphaMember = { userId: 'user-alpha-member', organizationId: orgAlpha.id, role: 'MEMBER' };
-  const userAlphaAuditor = { userId: 'user-alpha-auditor', organizationId: orgAlpha.id, role: 'AUDITOR' };
+  const userAlphaMember = {
+    userId: 'user-alpha-member',
+    organizationId: orgAlpha.id,
+    role: 'MEMBER',
+  };
+  const userAlphaAuditor = {
+    userId: 'user-alpha-auditor',
+    organizationId: orgAlpha.id,
+    role: 'AUDITOR',
+  };
 
   const userBetaOwner = { userId: 'user-beta-owner', organizationId: orgBeta.id, role: 'OWNER' };
-  const userBetaMember = { userId: 'b0000000-0000-0000-0000-000000000002', organizationId: orgBeta.id, role: 'MEMBER' };
+  const userBetaMember = {
+    userId: 'b0000000-0000-0000-0000-000000000002',
+    organizationId: orgBeta.id,
+    role: 'MEMBER',
+  };
 
   const projectBeta = {
     id: 'b0000000-0000-0000-0000-000000000101',
@@ -82,7 +94,12 @@ describe('A12-R06: Multi-Tenant Security & Penetration Testing', () => {
           }
           if (where.id === 'a0000000-0000-0000-0000-000000000501') {
             if (where.project?.organizationId === orgAlpha.id) {
-              return { id: 'a0000000-0000-0000-0000-000000000501', projectId: 'proj-alpha-101', title: 'Alpha Task', version: 1 };
+              return {
+                id: 'a0000000-0000-0000-0000-000000000501',
+                projectId: 'proj-alpha-101',
+                title: 'Alpha Task',
+                version: 1,
+              };
             }
           }
           // IDOR check for parent task within same project
@@ -123,7 +140,10 @@ describe('A12-R06: Multi-Tenant Security & Penetration Testing', () => {
   describe('Cross-Tenant Project Isolation (IDOR Protection)', () => {
     it('prevents Org Alpha from reading Org Beta project (GET /projects/:projectId)', async () => {
       const mockDb = createMockDb();
-      const app = createApp({ NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET }, { database: mockDb as any });
+      const app = createApp(
+        { NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET },
+        { database: mockDb as any },
+      );
       const tokenAlpha = createToken(userAlphaOwner);
 
       const res = await request(app)
@@ -136,7 +156,10 @@ describe('A12-R06: Multi-Tenant Security & Penetration Testing', () => {
 
     it('prevents Org Alpha from modifying Org Beta project (PATCH /projects/:projectId)', async () => {
       const mockDb = createMockDb();
-      const app = createApp({ NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET }, { database: mockDb as any });
+      const app = createApp(
+        { NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET },
+        { database: mockDb as any },
+      );
       const tokenAlpha = createToken(userAlphaOwner);
 
       const res = await request(app)
@@ -151,7 +174,10 @@ describe('A12-R06: Multi-Tenant Security & Penetration Testing', () => {
 
     it('prevents Org Alpha from deleting Org Beta project (DELETE /projects/:projectId)', async () => {
       const mockDb = createMockDb();
-      const app = createApp({ NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET }, { database: mockDb as any });
+      const app = createApp(
+        { NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET },
+        { database: mockDb as any },
+      );
       const tokenAlpha = createToken(userAlphaOwner);
 
       const res = await request(app)
@@ -165,7 +191,10 @@ describe('A12-R06: Multi-Tenant Security & Penetration Testing', () => {
 
     it('prevents Org Alpha from reading Org Beta tasks (GET /projects/:projectId/tasks)', async () => {
       const mockDb = createMockDb();
-      const app = createApp({ NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET }, { database: mockDb as any });
+      const app = createApp(
+        { NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET },
+        { database: mockDb as any },
+      );
       const tokenAlpha = createToken(userAlphaMember);
 
       const res = await request(app)
@@ -178,7 +207,10 @@ describe('A12-R06: Multi-Tenant Security & Penetration Testing', () => {
 
     it('prevents Org Alpha from reading Org Beta calendar export (GET /projects/:projectId/calendar.ics)', async () => {
       const mockDb = createMockDb();
-      const app = createApp({ NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET }, { database: mockDb as any });
+      const app = createApp(
+        { NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET },
+        { database: mockDb as any },
+      );
       const tokenAlpha = createToken(userAlphaMember);
 
       const res = await request(app)
@@ -191,7 +223,10 @@ describe('A12-R06: Multi-Tenant Security & Penetration Testing', () => {
 
     it('prevents Org Alpha from triggering webhooks for Org Beta (POST /projects/:projectId/webhooks/dispatch)', async () => {
       const mockDb = createMockDb();
-      const app = createApp({ NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET }, { database: mockDb as any });
+      const app = createApp(
+        { NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET },
+        { database: mockDb as any },
+      );
       const tokenAlpha = createToken(userAlphaOwner);
 
       const res = await request(app)
@@ -216,7 +251,10 @@ describe('A12-R06: Multi-Tenant Security & Penetration Testing', () => {
   describe('Cross-Tenant Task Isolation (IDOR Protection)', () => {
     it('prevents Org Alpha from updating Org Beta task (PATCH /tasks/:taskId)', async () => {
       const mockDb = createMockDb();
-      const app = createApp({ NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET }, { database: mockDb as any });
+      const app = createApp(
+        { NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET },
+        { database: mockDb as any },
+      );
       const tokenAlpha = createToken(userAlphaMember);
 
       const res = await request(app)
@@ -231,7 +269,10 @@ describe('A12-R06: Multi-Tenant Security & Penetration Testing', () => {
 
     it('prevents Org Alpha from deleting Org Beta task (DELETE /tasks/:taskId)', async () => {
       const mockDb = createMockDb();
-      const app = createApp({ NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET }, { database: mockDb as any });
+      const app = createApp(
+        { NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET },
+        { database: mockDb as any },
+      );
       const tokenAlpha = createToken(userAlphaOwner);
 
       const res = await request(app)
@@ -245,7 +286,10 @@ describe('A12-R06: Multi-Tenant Security & Penetration Testing', () => {
 
     it('prevents Org Alpha from adding comments to Org Beta task (POST /tasks/:taskId/comments)', async () => {
       const mockDb = createMockDb();
-      const app = createApp({ NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET }, { database: mockDb as any });
+      const app = createApp(
+        { NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET },
+        { database: mockDb as any },
+      );
       const tokenAlpha = createToken(userAlphaMember);
 
       const res = await request(app)
@@ -259,7 +303,10 @@ describe('A12-R06: Multi-Tenant Security & Penetration Testing', () => {
 
     it('prevents Org Alpha from viewing activity history of Org Beta task (GET /tasks/:taskId/activity)', async () => {
       const mockDb = createMockDb();
-      const app = createApp({ NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET }, { database: mockDb as any });
+      const app = createApp(
+        { NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET },
+        { database: mockDb as any },
+      );
       const tokenAlpha = createToken(userAlphaMember);
 
       const res = await request(app)
@@ -272,7 +319,10 @@ describe('A12-R06: Multi-Tenant Security & Penetration Testing', () => {
 
     it('prevents Org Alpha from adding subtasks to Org Beta task (POST /tasks/:taskId/subtasks)', async () => {
       const mockDb = createMockDb();
-      const app = createApp({ NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET }, { database: mockDb as any });
+      const app = createApp(
+        { NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET },
+        { database: mockDb as any },
+      );
       const tokenAlpha = createToken(userAlphaMember);
 
       const res = await request(app)
@@ -287,7 +337,10 @@ describe('A12-R06: Multi-Tenant Security & Penetration Testing', () => {
     // REGRESSION TEST: Fixed vulnerability on cross-tenant parentId linking in PATCH
     it('REGRESSION: rejects task PATCH specifying cross-tenant parentId (400 INVALID_PARENT_TASK)', async () => {
       const mockDb = createMockDb();
-      const app = createApp({ NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET }, { database: mockDb as any });
+      const app = createApp(
+        { NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET },
+        { database: mockDb as any },
+      );
       const tokenAlpha = createToken(userAlphaMember);
 
       const res = await request(app)
@@ -306,7 +359,10 @@ describe('A12-R06: Multi-Tenant Security & Penetration Testing', () => {
 
     it('REGRESSION: rejects self-referential parentId cycle on task PATCH (400 INVALID_PARENT_TASK)', async () => {
       const mockDb = createMockDb();
-      const app = createApp({ NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET }, { database: mockDb as any });
+      const app = createApp(
+        { NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET },
+        { database: mockDb as any },
+      );
       const tokenAlpha = createToken(userAlphaMember);
 
       const res = await request(app)
@@ -329,7 +385,10 @@ describe('A12-R06: Multi-Tenant Security & Penetration Testing', () => {
   describe('Cross-Tenant Team & Membership Isolation', () => {
     it('prevents Org Alpha from reading Org Beta team details (GET /teams/:teamId)', async () => {
       const mockDb = createMockDb();
-      const app = createApp({ NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET }, { database: mockDb as any });
+      const app = createApp(
+        { NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET },
+        { database: mockDb as any },
+      );
       const tokenAlpha = createToken(userAlphaMember);
 
       const res = await request(app)
@@ -342,7 +401,10 @@ describe('A12-R06: Multi-Tenant Security & Penetration Testing', () => {
 
     it('prevents adding user from Org Beta into Org Alpha team (USER_NOT_IN_ORGANIZATION)', async () => {
       const mockDb = createMockDb();
-      const app = createApp({ NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET }, { database: mockDb as any });
+      const app = createApp(
+        { NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET },
+        { database: mockDb as any },
+      );
       const tokenAlpha = createToken(userAlphaOwner);
 
       const res = await request(app)
@@ -362,7 +424,10 @@ describe('A12-R06: Multi-Tenant Security & Penetration Testing', () => {
   describe('Role-Based Access Control (RBAC) Boundary Enforcement', () => {
     it('blocks AUDITOR role from creating projects (403 FORBIDDEN)', async () => {
       const mockDb = createMockDb();
-      const app = createApp({ NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET }, { database: mockDb as any });
+      const app = createApp(
+        { NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET },
+        { database: mockDb as any },
+      );
       const tokenAuditor = createToken(userAlphaAuditor);
 
       const res = await request(app)
@@ -376,7 +441,10 @@ describe('A12-R06: Multi-Tenant Security & Penetration Testing', () => {
 
     it('blocks AUDITOR role from creating tasks (403 FORBIDDEN)', async () => {
       const mockDb = createMockDb();
-      const app = createApp({ NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET }, { database: mockDb as any });
+      const app = createApp(
+        { NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET },
+        { database: mockDb as any },
+      );
       const tokenAuditor = createToken(userAlphaAuditor);
 
       const res = await request(app)
@@ -390,7 +458,10 @@ describe('A12-R06: Multi-Tenant Security & Penetration Testing', () => {
 
     it('blocks MEMBER and MANAGER roles from deleting projects (requires OWNER)', async () => {
       const mockDb = createMockDb();
-      const app = createApp({ NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET }, { database: mockDb as any });
+      const app = createApp(
+        { NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET },
+        { database: mockDb as any },
+      );
 
       const tokenMember = createToken(userAlphaMember);
       const resMember = await request(app)
@@ -399,7 +470,11 @@ describe('A12-R06: Multi-Tenant Security & Penetration Testing', () => {
       expect(resMember.status).toBe(403);
       expect(resMember.body.error.code).toBe('FORBIDDEN');
 
-      const tokenManager = createToken({ userId: 'u-mgr', organizationId: orgAlpha.id, role: 'MANAGER' });
+      const tokenManager = createToken({
+        userId: 'u-mgr',
+        organizationId: orgAlpha.id,
+        role: 'MANAGER',
+      });
       const resManager = await request(app)
         .delete('/api/v1/projects/proj-alpha-101')
         .set('Authorization', `Bearer ${tokenManager}`);
@@ -409,7 +484,10 @@ describe('A12-R06: Multi-Tenant Security & Penetration Testing', () => {
 
     it('blocks MEMBER role from deleting tasks (requires OWNER or MANAGER)', async () => {
       const mockDb = createMockDb();
-      const app = createApp({ NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET }, { database: mockDb as any });
+      const app = createApp(
+        { NODE_ENV: 'test', AUTH_SECRET: TEST_SECRET },
+        { database: mockDb as any },
+      );
       const tokenMember = createToken(userAlphaMember);
 
       const res = await request(app)

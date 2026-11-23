@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import { WorkspaceHeader } from '../../components/server/WorkspaceHeader';
 
 export const metadata = {
@@ -18,7 +19,9 @@ export default function MemberLayout({ children }: { children: React.ReactNode }
           <span>WorkSphere Member Console — Collaborative Execution</span>
         </div>
         <div className="flex items-center gap-4 text-emerald-200">
-          <a href="/" className="hover:text-white underline">Back to Main Workspace</a>
+          <Link href="/" className="hover:text-white underline">
+            Back to Main Workspace
+          </Link>
           <span>Role: MEMBER</span>
         </div>
       </div>
@@ -28,9 +31,7 @@ export default function MemberLayout({ children }: { children: React.ReactNode }
         breadcrumbs={['WorkSphere', 'Member', 'Focus']}
         role="MEMBER"
       />
-      <main className="flex-1 p-6 max-w-7xl mx-auto w-full">
-        {children}
-      </main>
+      <main className="flex-1 p-6 max-w-7xl mx-auto w-full">{children}</main>
     </div>
   );
 }

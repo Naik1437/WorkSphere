@@ -27,7 +27,9 @@ export class TeamController {
       });
       const input = schema.safeParse(req.body);
       if (!input.success) {
-        return res.status(400).json({ error: { code: 'INVALID_INPUT', details: input.error.errors } });
+        return res
+          .status(400)
+          .json({ error: { code: 'INVALID_INPUT', details: input.error.errors } });
       }
 
       const identity = (req as any).identity;
@@ -47,7 +49,9 @@ export class TeamController {
       });
       const input = schema.safeParse(req.body);
       if (!input.success) {
-        return res.status(400).json({ error: { code: 'INVALID_INPUT', details: input.error.errors } });
+        return res
+          .status(400)
+          .json({ error: { code: 'INVALID_INPUT', details: input.error.errors } });
       }
 
       const identity = (req as any).identity;

@@ -33,9 +33,13 @@ const colors = {
 };
 
 function logHeader(title) {
-  console.log(`\n${colors.cyan}${colors.bold}======================================================================${colors.reset}`);
+  console.log(
+    `\n${colors.cyan}${colors.bold}======================================================================${colors.reset}`,
+  );
   console.log(`${colors.cyan}${colors.bold} ${title} ${colors.reset}`);
-  console.log(`${colors.cyan}${colors.bold}======================================================================${colors.reset}`);
+  console.log(
+    `${colors.cyan}${colors.bold}======================================================================${colors.reset}`,
+  );
 }
 
 function logDrillStep(step, description) {
@@ -43,7 +47,10 @@ function logDrillStep(step, description) {
 }
 
 function logOutcome(status, details) {
-  const badge = status === 'PASSED' ? `${colors.green}[PASSED]${colors.reset}` : `${colors.red}[FAILED]${colors.reset}`;
+  const badge =
+    status === 'PASSED'
+      ? `${colors.green}[PASSED]${colors.reset}`
+      : `${colors.red}[FAILED]${colors.reset}`;
   console.log(`  ${badge} ${details}`);
 }
 
@@ -68,13 +75,28 @@ async function runDrillA15R05() {
     body: { status: 'unavailable', checks: { database: 'unavailable', redis: 'ok' } },
   };
 
-  logDrillStep(2, `Evaluated /health (liveness): HTTP ${simulatedLiveness.status} - Containers kept alive`);
-  logDrillStep(3, `Evaluated /ready (readiness): HTTP ${simulatedDegradedReadiness.status} - Traffic shed successfully`);
+  logDrillStep(
+    2,
+    `Evaluated /health (liveness): HTTP ${simulatedLiveness.status} - Containers kept alive`,
+  );
+  logDrillStep(
+    3,
+    `Evaluated /ready (readiness): HTTP ${simulatedDegradedReadiness.status} - Traffic shed successfully`,
+  );
 
   const passed = simulatedLiveness.status === 200 && simulatedDegradedReadiness.status === 503;
   const duration = Date.now() - start;
-  logOutcome(passed ? 'PASSED' : 'FAILED', 'Readiness correctly sheds traffic on DB latency without cascading restarts.');
-  recordResult('A15-R05', 'Service Outage & Probe Readiness', passed ? 'PASSED' : 'FAILED', duration, 'HTTP 503 on degraded /ready; HTTP 200 on /health');
+  logOutcome(
+    passed ? 'PASSED' : 'FAILED',
+    'Readiness correctly sheds traffic on DB latency without cascading restarts.',
+  );
+  recordResult(
+    'A15-R05',
+    'Service Outage & Probe Readiness',
+    passed ? 'PASSED' : 'FAILED',
+    duration,
+    'HTTP 503 on degraded /ready; HTTP 200 on /health',
+  );
 }
 
 // -----------------------------------------------------------------------------
@@ -89,7 +111,10 @@ async function runDrillA15R06() {
     status: 503,
     body: { error: { code: 'DATABASE_UNAVAILABLE', message: 'Database connection offline' } },
   };
-  logDrillStep(2, `Write request caught by circuit-breaker: HTTP ${simulatedWriteResponse.status} ${simulatedWriteResponse.body.error.code}`);
+  logDrillStep(
+    2,
+    `Write request caught by circuit-breaker: HTTP ${simulatedWriteResponse.status} ${simulatedWriteResponse.body.error.code}`,
+  );
 
   logDrillStep(3, 'Validating database backup procedures and scripts in scripts/...');
   const ps1Path = resolve(ROOT_DIR, 'scripts', 'backup-db.ps1');
@@ -102,8 +127,17 @@ async function runDrillA15R06() {
 
   const passed = simulatedWriteResponse.status === 503 && ps1Exists && shExists;
   const duration = Date.now() - start;
-  logOutcome(passed ? 'PASSED' : 'FAILED', 'Circuit-breaker preserves process integrity; backup recovery scripts validated.');
-  recordResult('A15-R06', 'Database Failure & Safe Recovery', passed ? 'PASSED' : 'FAILED', duration, '503 DATABASE_UNAVAILABLE circuit breaker + backup scripts validated');
+  logOutcome(
+    passed ? 'PASSED' : 'FAILED',
+    'Circuit-breaker preserves process integrity; backup recovery scripts validated.',
+  );
+  recordResult(
+    'A15-R06',
+    'Database Failure & Safe Recovery',
+    passed ? 'PASSED' : 'FAILED',
+    duration,
+    '503 DATABASE_UNAVAILABLE circuit breaker + backup scripts validated',
+  );
 }
 
 // -----------------------------------------------------------------------------
@@ -124,15 +158,24 @@ async function runDrillA15R07() {
   schedule.forEach((s) => {
     logDrillStep(
       2,
-      `Attempt ${s.attempt}: retry=${s.retry}, delay=${s.delaySeconds}s, deadLetter=${s.deadLetter}`
+      `Attempt ${s.attempt}: retry=${s.retry}, delay=${s.delaySeconds}s, deadLetter=${s.deadLetter}`,
     );
   });
 
   const finalAttempt = schedule[4];
   const passed = finalAttempt.deadLetter === true && finalAttempt.retry === false;
   const duration = Date.now() - start;
-  logOutcome(passed ? 'PASSED' : 'FAILED', 'Jobs back off exponentially (2s -> 4s -> 8s -> 16s) and dead-letter at attempt 5.');
-  recordResult('A15-R07', 'Worker Failure & Dead-Lettering', passed ? 'PASSED' : 'FAILED', duration, 'Exponential backoff schedule verified; dead-lettering at max 5 attempts');
+  logOutcome(
+    passed ? 'PASSED' : 'FAILED',
+    'Jobs back off exponentially (2s -> 4s -> 8s -> 16s) and dead-letter at attempt 5.',
+  );
+  recordResult(
+    'A15-R07',
+    'Worker Failure & Dead-Lettering',
+    passed ? 'PASSED' : 'FAILED',
+    duration,
+    'Exponential backoff schedule verified; dead-lettering at max 5 attempts',
+  );
 }
 
 // -----------------------------------------------------------------------------
@@ -155,8 +198,17 @@ async function runDrillA15R08() {
 
   const passed = keyA === keyB && keyA !== keyC;
   const duration = Date.now() - start;
-  logOutcome(passed ? 'PASSED' : 'FAILED', 'Deterministic idempotency keys guarantee single execution semantics.');
-  recordResult('A15-R08', 'Duplicate Job & Event Idempotency', passed ? 'PASSED' : 'FAILED', duration, 'Idempotency keys deterministic and deduplicated via database upsert/unique constraints');
+  logOutcome(
+    passed ? 'PASSED' : 'FAILED',
+    'Deterministic idempotency keys guarantee single execution semantics.',
+  );
+  recordResult(
+    'A15-R08',
+    'Duplicate Job & Event Idempotency',
+    passed ? 'PASSED' : 'FAILED',
+    duration,
+    'Idempotency keys deterministic and deduplicated via database upsert/unique constraints',
+  );
 }
 
 // -----------------------------------------------------------------------------
@@ -169,12 +221,17 @@ async function runDrillA15R09() {
 
   const secret = 'drill-test-secret-32-chars-minimum-length';
   const signToken = (payload) => {
-    const body = Buffer.from(JSON.stringify({ ...payload, exp: Math.floor(Date.now() / 1000) + 900 })).toString('base64url');
+    const body = Buffer.from(
+      JSON.stringify({ ...payload, exp: Math.floor(Date.now() / 1000) + 900 }),
+    ).toString('base64url');
     return `${body}.${createHmac('sha256', secret).update(body).digest('base64url')}`;
   };
 
   const alphaToken = signToken({ sub: 'user-alpha', organizationId: 'org-alpha', role: 'MEMBER' });
-  logDrillStep(2, `Generated signed bearer token for Org Alpha (token prefix: ${alphaToken.slice(0, 24)}...)`);
+  logDrillStep(
+    2,
+    `Generated signed bearer token for Org Alpha (token prefix: ${alphaToken.slice(0, 24)}...)`,
+  );
 
   // Simulated repository query scoped by organizationId
   const dbStore = [
@@ -186,13 +243,25 @@ async function runDrillA15R09() {
   const queried = attackerQuery('org-alpha', 'proj-beta-99');
   const responseCode = queried ? 200 : 404;
 
-  logDrillStep(3, `Repository filter (id='proj-beta-99' AND organizationId='org-alpha') returned: ${queried ? 'LEAK' : 'NULL'}`);
+  logDrillStep(
+    3,
+    `Repository filter (id='proj-beta-99' AND organizationId='org-alpha') returned: ${queried ? 'LEAK' : 'NULL'}`,
+  );
   logDrillStep(4, `API response status: HTTP ${responseCode} NOT_FOUND (Zero tenant leakage)`);
 
   const passed = queried === null && responseCode === 404;
   const duration = Date.now() - start;
-  logOutcome(passed ? 'PASSED' : 'FAILED', 'Multi-tenant isolation verified server-side. Cross-tenant access strictly blocked.');
-  recordResult('A15-R09', 'Cross-Tenant Access Incident', passed ? 'PASSED' : 'FAILED', duration, 'HTTP 404/403 enforced; cross-tenant query scope prevented data leakage');
+  logOutcome(
+    passed ? 'PASSED' : 'FAILED',
+    'Multi-tenant isolation verified server-side. Cross-tenant access strictly blocked.',
+  );
+  recordResult(
+    'A15-R09',
+    'Cross-Tenant Access Incident',
+    passed ? 'PASSED' : 'FAILED',
+    duration,
+    'HTTP 404/403 enforced; cross-tenant query scope prevented data leakage',
+  );
 }
 
 // -----------------------------------------------------------------------------
@@ -201,7 +270,10 @@ async function runDrillA15R09() {
 async function runDrillA15R10() {
   const start = Date.now();
   logHeader('DRILL A15-R10: Concurrency Conflict / Stale Task Update Collision');
-  logDrillStep(1, 'Simulating capstone concurrency race: User 1 and User 2 modify Task version 1...');
+  logDrillStep(
+    1,
+    'Simulating capstone concurrency race: User 1 and User 2 modify Task version 1...',
+  );
 
   let serverTask = { id: 'task-capstone', title: 'Original Specification', version: 1 };
   logDrillStep(2, `Initial State: Task "${serverTask.id}", version: ${serverTask.version}`);
@@ -214,16 +286,34 @@ async function runDrillA15R10() {
   };
 
   const resUser1 = user1Commit(1, 'User 1 Updated Title');
-  logDrillStep(3, `User 1 update: HTTP ${resUser1.status} -> Task version advanced to ${serverTask.version}`);
+  logDrillStep(
+    3,
+    `User 1 update: HTTP ${resUser1.status} -> Task version advanced to ${serverTask.version}`,
+  );
 
   // User 2 attempts to commit with stale version 1
   const resUser2 = user1Commit(1, 'User 2 Stale Overwrite');
-  logDrillStep(4, `User 2 update: HTTP ${resUser2.status} ${resUser2.code} (Prevented silent overwrite)`);
+  logDrillStep(
+    4,
+    `User 2 update: HTTP ${resUser2.status} ${resUser2.code} (Prevented silent overwrite)`,
+  );
 
-  const passed = resUser1.status === 200 && resUser2.status === 409 && serverTask.title === 'User 1 Updated Title';
+  const passed =
+    resUser1.status === 200 &&
+    resUser2.status === 409 &&
+    serverTask.title === 'User 1 Updated Title';
   const duration = Date.now() - start;
-  logOutcome(passed ? 'PASSED' : 'FAILED', 'Optimistic locking (version checking) prevents data loss on concurrent writes.');
-  recordResult('A15-R10', 'Concurrency Conflict & Stale Update Collision', passed ? 'PASSED' : 'FAILED', duration, 'HTTP 409 VERSION_CONFLICT triggered; silent overwrites prevented');
+  logOutcome(
+    passed ? 'PASSED' : 'FAILED',
+    'Optimistic locking (version checking) prevents data loss on concurrent writes.',
+  );
+  recordResult(
+    'A15-R10',
+    'Concurrency Conflict & Stale Update Collision',
+    passed ? 'PASSED' : 'FAILED',
+    duration,
+    'HTTP 409 VERSION_CONFLICT triggered; silent overwrites prevented',
+  );
 }
 
 // -----------------------------------------------------------------------------
@@ -232,7 +322,10 @@ async function runDrillA15R10() {
 async function runDrillA15R11() {
   const start = Date.now();
   logHeader('DRILL A15-R11: External Dependency & Communication Failure Drill');
-  logDrillStep(1, 'Simulating external webhook endpoint failure (HTTP 500 / Connection Refused)...');
+  logDrillStep(
+    1,
+    'Simulating external webhook endpoint failure (HTTP 500 / Connection Refused)...',
+  );
 
   const simulatedWorkerExecution = async () => {
     const errorLog = [];
@@ -257,15 +350,26 @@ async function runDrillA15R11() {
 
   const passed = logs.length > 0 && logs[0].action === 'schedule_retry_with_backoff';
   const duration = Date.now() - start;
-  logOutcome(passed ? 'PASSED' : 'FAILED', 'External failures handled asynchronously without failing core API transactions.');
-  recordResult('A15-R11', 'External Dependency & Alert Response', passed ? 'PASSED' : 'FAILED', duration, 'Asynchronous error containment, backoff retry scheduling, and alert dispatch verified');
+  logOutcome(
+    passed ? 'PASSED' : 'FAILED',
+    'External failures handled asynchronously without failing core API transactions.',
+  );
+  recordResult(
+    'A15-R11',
+    'External Dependency & Alert Response',
+    passed ? 'PASSED' : 'FAILED',
+    duration,
+    'Asynchronous error containment, backoff retry scheduling, and alert dispatch verified',
+  );
 }
 
 // -----------------------------------------------------------------------------
 // MAIN DRILL ORCHESTRATOR & SUMMARY REPORT
 // -----------------------------------------------------------------------------
 async function main() {
-  console.log(`\n${colors.bold}WorkSphere Operational Incident Response Drills (A15-R05 through A15-R11)${colors.reset}`);
+  console.log(
+    `\n${colors.bold}WorkSphere Operational Incident Response Drills (A15-R05 through A15-R11)${colors.reset}`,
+  );
   console.log(`Execution Timestamp: ${new Date().toISOString()}`);
   console.log(`Environment: Non-destructive local simulation\n`);
 
@@ -278,23 +382,36 @@ async function main() {
   await runDrillA15R11();
 
   logHeader('INCIDENT RESPONSE DRILLS SUMMARY REPORT');
-  console.log('ID        | Scenario Description                             | Status  | Duration | Evidence');
-  console.log('----------|--------------------------------------------------|---------|----------|-----------------------------------------------------');
+  console.log(
+    'ID        | Scenario Description                             | Status  | Duration | Evidence',
+  );
+  console.log(
+    '----------|--------------------------------------------------|---------|----------|-----------------------------------------------------',
+  );
   for (const r of drillResults) {
     const idPad = r.id.padEnd(9);
     const namePad = r.name.slice(0, 48).padEnd(48);
-    const statusCol = r.status === 'PASSED' ? `${colors.green}PASSED ${colors.reset}` : `${colors.red}FAILED ${colors.reset}`;
+    const statusCol =
+      r.status === 'PASSED'
+        ? `${colors.green}PASSED ${colors.reset}`
+        : `${colors.red}FAILED ${colors.reset}`;
     const durPad = `${r.durationMs}ms`.padEnd(8);
     console.log(`${idPad} | ${namePad} | ${statusCol} | ${durPad} | ${r.details}`);
   }
-  console.log('------------------------------------------------------------------------------------------------');
+  console.log(
+    '------------------------------------------------------------------------------------------------',
+  );
 
   const allPassed = drillResults.every((r) => r.status === 'PASSED');
   if (allPassed) {
-    console.log(`\n${colors.green}${colors.bold}[SUCCESS] All 7 incident drills (A15-R05 through A15-R11) executed and verified successfully.${colors.reset}\n`);
+    console.log(
+      `\n${colors.green}${colors.bold}[SUCCESS] All 7 incident drills (A15-R05 through A15-R11) executed and verified successfully.${colors.reset}\n`,
+    );
     process.exit(0);
   } else {
-    console.log(`\n${colors.red}${colors.bold}[FAILURE] One or more incident drills failed.${colors.reset}\n`);
+    console.log(
+      `\n${colors.red}${colors.bold}[FAILURE] One or more incident drills failed.${colors.reset}\n`,
+    );
     process.exit(1);
   }
 }

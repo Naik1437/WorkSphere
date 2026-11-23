@@ -19,7 +19,9 @@ export function createAuthRouter(
       const schema = z.object({ refreshToken: z.string().min(1) });
       const input = schema.safeParse(req.body);
       if (!input.success) {
-        return res.status(400).json({ error: { code: 'INVALID_INPUT', details: input.error.errors } });
+        return res
+          .status(400)
+          .json({ error: { code: 'INVALID_INPUT', details: input.error.errors } });
       }
 
       const hash = tokenHash(input.data.refreshToken);
@@ -61,7 +63,9 @@ export function createAuthRouter(
       const schema = z.object({ refreshToken: z.string().min(1) });
       const input = schema.safeParse(req.body);
       if (!input.success) {
-        return res.status(400).json({ error: { code: 'INVALID_INPUT', details: input.error.errors } });
+        return res
+          .status(400)
+          .json({ error: { code: 'INVALID_INPUT', details: input.error.errors } });
       }
 
       await db.session.updateMany({

@@ -18,7 +18,9 @@ test.describe('WorkSphere End-to-End User Flows (A12-R05)', () => {
 
     // Default Sign In card view
     await expect(page.getByRole('button', { name: 'Sign In', exact: true })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Create Organization', exact: true })).toBeVisible();
+    await expect(
+      page.getByRole('button', { name: 'Create Organization', exact: true }),
+    ).toBeVisible();
     await expect(page.locator('#auth-email')).toBeVisible();
     await expect(page.locator('#auth-password')).toBeVisible();
     await expect(page.getByRole('button', { name: 'Sign In to Workspace' })).toBeVisible();
@@ -61,8 +63,8 @@ test.describe('WorkSphere End-to-End User Flows (A12-R05)', () => {
 
     // Click submit and verify HTML5 validation prevents submission
     await submitBtn.click();
-    const isPasswordValid = await passwordInput.evaluate(
-      (el: HTMLInputElement) => el.checkValidity(),
+    const isPasswordValid = await passwordInput.evaluate((el: HTMLInputElement) =>
+      el.checkValidity(),
     );
     expect(isPasswordValid).toBe(false);
   });

@@ -91,7 +91,10 @@ export function AuthCard({ onSubmit, isSubmitting = false, defaultMode = 'login'
       </div>
 
       {validationError && (
-        <div role="alert" className="mb-4 p-3 rounded-lg bg-rose-950/80 border border-rose-800/80 text-rose-200 text-xs">
+        <div
+          role="alert"
+          className="mb-4 p-3 rounded-lg bg-rose-950/80 border border-rose-800/80 text-rose-200 text-xs"
+        >
           {validationError}
         </div>
       )}
@@ -101,7 +104,10 @@ export function AuthCard({ onSubmit, isSubmitting = false, defaultMode = 'login'
         {authMode === 'register' && (
           <>
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1" htmlFor="auth-org-name">
+              <label
+                className="block text-xs font-medium text-slate-300 mb-1"
+                htmlFor="auth-org-name"
+              >
                 Organization Name
               </label>
               <input
@@ -114,7 +120,10 @@ export function AuthCard({ onSubmit, isSubmitting = false, defaultMode = 'login'
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1" htmlFor="auth-org-slug">
+              <label
+                className="block text-xs font-medium text-slate-300 mb-1"
+                htmlFor="auth-org-slug"
+              >
                 Organization Slug
               </label>
               <input

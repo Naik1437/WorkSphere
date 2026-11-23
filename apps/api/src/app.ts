@@ -136,17 +136,15 @@ export function createApp(
   const requireDb = (_req: express.Request, res: express.Response, next: express.NextFunction) =>
     db ? next() : res.status(503).json({ error: { code: 'DATABASE_UNAVAILABLE' } });
 
-  const requireRole = (roles: string[]) => (
-    req: express.Request,
-    res: express.Response,
-    next: express.NextFunction,
-  ) => {
-    const identity = (req as any).identity;
-    if (!identity || !roles.includes(identity.role)) {
-      return res.status(403).json({ error: { code: 'FORBIDDEN' } });
-    }
-    return next();
-  };
+  const requireRole =
+    (roles: string[]) =>
+    (req: express.Request, res: express.Response, next: express.NextFunction) => {
+      const identity = (req as any).identity;
+      if (!identity || !roles.includes(identity.role)) {
+        return res.status(403).json({ error: { code: 'FORBIDDEN' } });
+      }
+      return next();
+    };
 
   const middlewareBundle = { authenticate, requireDb, requireRole };
 
@@ -169,26 +167,11 @@ export function createApp(
   const authController = new AuthController(authService);
 
   // 4. Routes
-  app.use(
-    '/api/v1',
-    createAuthRouter(authController, db, authService, requireDb),
-  );
-  app.use(
-    '/api/v1',
-    createProjectRouter(projectController, taskController, middlewareBundle),
-  );
-  app.use(
-    '/api/v1',
-    createTaskRouter(taskController, middlewareBundle),
-  );
-  app.use(
-    '/api/v1',
-    createTeamRouter(teamController, middlewareBundle),
-  );
-  app.use(
-    '/api/v1',
-    createOrganizationRouter(orgRepo, middlewareBundle),
-  );
+  app.use('/api/v1', createAuthRouter(authController, db, authService, requireDb));
+  app.use('/api/v1', createProjectRouter(projectController, taskController, middlewareBundle));
+  app.use('/api/v1', createTaskRouter(taskController, middlewareBundle));
+  app.use('/api/v1', createTeamRouter(teamController, middlewareBundle));
+  app.use('/api/v1', createOrganizationRouter(orgRepo, middlewareBundle));
   app.use(
     '/api/v1',
     createIntegrationRouter({

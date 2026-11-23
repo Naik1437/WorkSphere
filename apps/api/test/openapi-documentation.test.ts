@@ -3,7 +3,10 @@ import { describe, expect, it } from 'vitest';
 import { createApp } from '../src/app.js';
 
 describe('API Documentation & OpenAPI/Swagger Specification (A13-R01, A13-R02, A13-R04)', () => {
-  const app = createApp({ NODE_ENV: 'test', AUTH_SECRET: 'test-secret-at-least-32-chars-long-abc' });
+  const app = createApp({
+    NODE_ENV: 'test',
+    AUTH_SECRET: 'test-secret-at-least-32-chars-long-abc',
+  });
 
   it('serves OpenAPI 3.0.3 JSON specification with comprehensive endpoint coverage', async () => {
     const res = await request(app).get('/api/v1/openapi.json');
@@ -72,9 +75,15 @@ describe('API Documentation & OpenAPI/Swagger Specification (A13-R01, A13-R02, A
     expect(paths['/api/v1/tasks/{taskId}/reminders'].post).toBeDefined();
 
     // Verify request/response examples are present
-    expect(paths['/api/v1/auth/register'].post.requestBody.content['application/json'].schema).toBeDefined();
-    expect(paths['/api/v1/auth/register'].post.responses['201'].content['application/json'].example).toBeDefined();
-    expect(paths['/api/v1/tasks/{taskId}'].patch.responses['200'].content['application/json'].example).toBeDefined();
+    expect(
+      paths['/api/v1/auth/register'].post.requestBody.content['application/json'].schema,
+    ).toBeDefined();
+    expect(
+      paths['/api/v1/auth/register'].post.responses['201'].content['application/json'].example,
+    ).toBeDefined();
+    expect(
+      paths['/api/v1/tasks/{taskId}'].patch.responses['200'].content['application/json'].example,
+    ).toBeDefined();
   });
 
   it('serves interactive Swagger UI HTML at /docs and /api/v1/docs', async () => {

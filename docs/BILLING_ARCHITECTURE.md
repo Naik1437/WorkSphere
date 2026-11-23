@@ -5,9 +5,10 @@
 WorkSphere is architected primarily as an **open-core, self-hostable enterprise project orchestration platform**. The core repository provides complete task management, real-time collaboration, activity auditing, analytics, and multi-tenant organizational isolation without requiring third-party payment rails.
 
 In accordance with **Assessment 08 (Third-Party Integrations - A08-R06)** and the project evaluation criteria:
-* **Production Live Charges**: Strictly excluded. No live credit card charges are processed, and no real credit card numbers, CVVs, or cardholder secrets are accepted or retained in WorkSphere databases.
-* **Sandbox & Test Mode**: WorkSphere provides a formal, secure, sandbox-compatible Stripe integration module (`apps/api/src/billing.ts`) with cryptographic webhook signature verification (`t=timestamp,v1=signature`) and replay-attack defense.
-* **PCI-DSS Compliance Boundary**: WorkSphere adheres to **PCI-DSS SAQ A** scoping guidelines. Payment card details never touch WorkSphere servers; all checkout flows redirect to hosted Stripe Checkout sessions.
+
+- **Production Live Charges**: Strictly excluded. No live credit card charges are processed, and no real credit card numbers, CVVs, or cardholder secrets are accepted or retained in WorkSphere databases.
+- **Sandbox & Test Mode**: WorkSphere provides a formal, secure, sandbox-compatible Stripe integration module (`apps/api/src/billing.ts`) with cryptographic webhook signature verification (`t=timestamp,v1=signature`) and replay-attack defense.
+- **PCI-DSS Compliance Boundary**: WorkSphere adheres to **PCI-DSS SAQ A** scoping guidelines. Payment card details never touch WorkSphere servers; all checkout flows redirect to hosted Stripe Checkout sessions.
 
 ---
 
@@ -15,11 +16,11 @@ In accordance with **Assessment 08 (Third-Party Integrations - A08-R06)** and th
 
 WorkSphere models three operational tiers for organization workspaces:
 
-| Tier | Monthly Price | User Limit | Project Limit | Key Capabilities |
-|---|---|---|---|---|
-| **Community (FREE)** | \$0 | 5 members | 10 projects | Core Kanban & list views, activity streams, basic webhooks |
-| **Professional (PRO)** | \$29 | 25 members | 100 projects | S3/MinIO attachment storage, Python analytics engine, SSE events |
-| **Enterprise** | \$199 | Unlimited | Unlimited | Full audit logging, custom RBAC permissions, dedicated SLA support |
+| Tier                   | Monthly Price | User Limit | Project Limit | Key Capabilities                                                   |
+| ---------------------- | ------------- | ---------- | ------------- | ------------------------------------------------------------------ |
+| **Community (FREE)**   | \$0           | 5 members  | 10 projects   | Core Kanban & list views, activity streams, basic webhooks         |
+| **Professional (PRO)** | \$29          | 25 members | 100 projects  | S3/MinIO attachment storage, Python analytics engine, SSE events   |
+| **Enterprise**         | \$199         | Unlimited  | Unlimited     | Full audit logging, custom RBAC permissions, dedicated SLA support |
 
 ---
 

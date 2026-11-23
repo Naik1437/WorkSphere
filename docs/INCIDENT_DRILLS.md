@@ -7,6 +7,7 @@ This document records the incident response drills, simulation procedures, recov
 ## 1. Executive Summary & Drill Methodology
 
 WorkSphere operational reliability relies on defense-in-depth principles:
+
 - **Zero Silent Data Loss**: Optimistic locking (`version` field) prevents race conditions and concurrent write collisions.
 - **Fail-Fast Readiness Probing**: `/ready` actively checks PostgreSQL and Redis; failures trigger immediate traffic shedding while `/health` preserves container liveness.
 - **Circuit-Breaker Degradation**: Missing database connections fail fast with HTTP 503 `DATABASE_UNAVAILABLE` rather than unhandled rejections or crashes.
@@ -155,15 +156,15 @@ npm run test -w @worksphere/api -- test/incident-drills.test.ts
 
 ## 3. Incident Drills Summary Log
 
-| Drill ID | Scenario | Target Requirement | Status | Verification Mechanism |
-|---|---|---|---|---|
-| **A15-R05** | Service Outage & Probe Readiness | A15-R05 | **PASSED** | Vitest + Drill Runner |
-| **A15-R06** | Database Failure & Safe Recovery | A15-R06 | **PASSED** | Vitest + Script Check |
-| **A15-R07** | Worker Failure & Dead-Lettering | A15-R07 | **PASSED** | Vitest + Drill Runner |
-| **A15-R08** | Duplicate Job & Event Idempotency | A15-R08 | **PASSED** | Vitest + Drill Runner |
-| **A15-R09** | Cross-Tenant Access Incident | A15-R09 | **PASSED** | Vitest + Drill Runner |
-| **A15-R10** | Concurrency Conflict & Stale Collision | A15-R10 | **PASSED** | Vitest + Drill Runner |
-| **A15-R11** | External Dependency & Alert Response | A15-R11 | **PASSED** | Vitest + Drill Runner |
+| Drill ID    | Scenario                               | Target Requirement | Status     | Verification Mechanism |
+| ----------- | -------------------------------------- | ------------------ | ---------- | ---------------------- |
+| **A15-R05** | Service Outage & Probe Readiness       | A15-R05            | **PASSED** | Vitest + Drill Runner  |
+| **A15-R06** | Database Failure & Safe Recovery       | A15-R06            | **PASSED** | Vitest + Script Check  |
+| **A15-R07** | Worker Failure & Dead-Lettering        | A15-R07            | **PASSED** | Vitest + Drill Runner  |
+| **A15-R08** | Duplicate Job & Event Idempotency      | A15-R08            | **PASSED** | Vitest + Drill Runner  |
+| **A15-R09** | Cross-Tenant Access Incident           | A15-R09            | **PASSED** | Vitest + Drill Runner  |
+| **A15-R10** | Concurrency Conflict & Stale Collision | A15-R10            | **PASSED** | Vitest + Drill Runner  |
+| **A15-R11** | External Dependency & Alert Response   | A15-R11            | **PASSED** | Vitest + Drill Runner  |
 
 ---
 
@@ -175,6 +176,7 @@ When an operational incident occurs, the following post-incident review must be 
 # Incident Post-Mortem: [INCIDENT-ID]
 
 ## Summary
+
 - **Date / Time**: YYYY-MM-DD HH:MM UTC
 - **Duration**: [X] minutes
 - **Severity**: P1 (Critical) / P2 (Major) / P3 (Minor)
@@ -182,9 +184,11 @@ When an operational incident occurs, the following post-incident review must be 
 - **Services Affected**: [API / Database / Redis / Worker / Web]
 
 ## Root Cause
+
 [Detailed description of what caused the failure, including trigger conditions, code paths, or environmental factors.]
 
 ## Detection & Response Timeline
+
 - **HH:MM**: Incident triggered.
 - **HH:MM**: Alert fired (Readiness probe failure / Error budget alert).
 - **HH:MM**: Incident commander assigned.
@@ -192,6 +196,7 @@ When an operational incident occurs, the following post-incident review must be 
 - **HH:MM**: Full service restoration verified.
 
 ## Corrective Actions & Prevention
+
 1. [Action item with owner and target completion date]
 2. [Regression test added to test suite]
 3. [Monitoring alert threshold adjustment]

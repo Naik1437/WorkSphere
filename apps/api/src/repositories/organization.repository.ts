@@ -62,7 +62,12 @@ export class OrganizationRepository {
     });
   }
 
-  public async acceptInvitation(invitationId: string, userId: string, organizationId: string, role: string) {
+  public async acceptInvitation(
+    invitationId: string,
+    userId: string,
+    organizationId: string,
+    role: string,
+  ) {
     await this.db.membership.upsert({
       where: {
         organizationId_userId: { organizationId, userId },

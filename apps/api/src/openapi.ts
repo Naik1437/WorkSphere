@@ -32,7 +32,10 @@ export const openApiSpec = {
     { name: 'Tasks', description: 'Task lifecycle, concurrency control, and subtasks' },
     { name: 'Collaboration', description: 'Comments, activity audit logs, and file attachments' },
     { name: 'Notifications', description: 'Outbox job scheduling and reminders' },
-    { name: 'Real-Time & Updates', description: 'Server-Sent Events (SSE) stream for live collaborative updates' },
+    {
+      name: 'Real-Time & Updates',
+      description: 'Server-Sent Events (SSE) stream for live collaborative updates',
+    },
   ],
   components: {
     securitySchemes: {
@@ -40,7 +43,8 @@ export const openApiSpec = {
         type: 'http',
         scheme: 'bearer',
         bearerFormat: 'HMAC-SHA256 Token',
-        description: 'Provide your 15-minute access token in the Authorization header: `Bearer <token>`',
+        description:
+          'Provide your 15-minute access token in the Authorization header: `Bearer <token>`',
       },
     },
     responses: {
@@ -137,9 +141,21 @@ export const openApiSpec = {
         type: 'object',
         properties: {
           id: { type: 'string', format: 'uuid', example: 'e7cb2811-3fb3-488b-a488-dcff7ecbe9fa' },
-          userId: { type: 'string', format: 'uuid', example: 'c4b82d41-3b7d-472e-84cf-26f5f9bf723c' },
-          organizationId: { type: 'string', format: 'uuid', example: '87e246cf-3069-42b4-82a1-fa4f91e6b567' },
-          role: { type: 'string', enum: ['OWNER', 'MANAGER', 'MEMBER', 'AUDITOR'], example: 'OWNER' },
+          userId: {
+            type: 'string',
+            format: 'uuid',
+            example: 'c4b82d41-3b7d-472e-84cf-26f5f9bf723c',
+          },
+          organizationId: {
+            type: 'string',
+            format: 'uuid',
+            example: '87e246cf-3069-42b4-82a1-fa4f91e6b567',
+          },
+          role: {
+            type: 'string',
+            enum: ['OWNER', 'MANAGER', 'MEMBER', 'AUDITOR'],
+            example: 'OWNER',
+          },
           user: { $ref: '#/components/schemas/User' },
         },
       },
@@ -147,9 +163,16 @@ export const openApiSpec = {
         type: 'object',
         properties: {
           id: { type: 'string', format: 'uuid', example: '550e8400-e29b-41d4-a716-446655440000' },
-          organizationId: { type: 'string', format: 'uuid', example: '87e246cf-3069-42b4-82a1-fa4f91e6b567' },
+          organizationId: {
+            type: 'string',
+            format: 'uuid',
+            example: '87e246cf-3069-42b4-82a1-fa4f91e6b567',
+          },
           name: { type: 'string', example: 'Frontend Platform Team' },
-          description: { type: 'string', example: 'Engineers responsible for Next.js web application and design system' },
+          description: {
+            type: 'string',
+            example: 'Engineers responsible for Next.js web application and design system',
+          },
           createdAt: { type: 'string', format: 'date-time', example: '2026-11-23T08:15:00.000Z' },
           updatedAt: { type: 'string', format: 'date-time', example: '2026-11-23T08:15:00.000Z' },
           members: {
@@ -162,8 +185,16 @@ export const openApiSpec = {
         type: 'object',
         properties: {
           id: { type: 'string', format: 'uuid', example: 'd1c3a649-0fa4-4f81-a957-c8389655f462' },
-          teamId: { type: 'string', format: 'uuid', example: '550e8400-e29b-41d4-a716-446655440000' },
-          userId: { type: 'string', format: 'uuid', example: 'c4b82d41-3b7d-472e-84cf-26f5f9bf723c' },
+          teamId: {
+            type: 'string',
+            format: 'uuid',
+            example: '550e8400-e29b-41d4-a716-446655440000',
+          },
+          userId: {
+            type: 'string',
+            format: 'uuid',
+            example: 'c4b82d41-3b7d-472e-84cf-26f5f9bf723c',
+          },
           joinedAt: { type: 'string', format: 'date-time', example: '2026-11-23T08:16:00.000Z' },
           user: { $ref: '#/components/schemas/User' },
         },
@@ -172,9 +203,16 @@ export const openApiSpec = {
         type: 'object',
         properties: {
           id: { type: 'string', format: 'uuid', example: '3fa85f64-5717-4562-b3fc-2c963f66afa6' },
-          organizationId: { type: 'string', format: 'uuid', example: '87e246cf-3069-42b4-82a1-fa4f91e6b567' },
+          organizationId: {
+            type: 'string',
+            format: 'uuid',
+            example: '87e246cf-3069-42b4-82a1-fa4f91e6b567',
+          },
           name: { type: 'string', example: 'Core Platform Migration' },
-          description: { type: 'string', example: 'Migrating legacy services to modern containerized microservices' },
+          description: {
+            type: 'string',
+            example: 'Migrating legacy services to modern containerized microservices',
+          },
           createdAt: { type: 'string', format: 'date-time', example: '2026-11-23T08:30:00.000Z' },
           updatedAt: { type: 'string', format: 'date-time', example: '2026-11-23T08:30:00.000Z' },
         },
@@ -183,13 +221,32 @@ export const openApiSpec = {
         type: 'object',
         properties: {
           id: { type: 'string', format: 'uuid', example: '9a22f3e4-6d9b-41f2-b7e1-8f5bc645e991' },
-          projectId: { type: 'string', format: 'uuid', example: '3fa85f64-5717-4562-b3fc-2c963f66afa6' },
-          organizationId: { type: 'string', format: 'uuid', example: '87e246cf-3069-42b4-82a1-fa4f91e6b567' },
+          projectId: {
+            type: 'string',
+            format: 'uuid',
+            example: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+          },
+          organizationId: {
+            type: 'string',
+            format: 'uuid',
+            example: '87e246cf-3069-42b4-82a1-fa4f91e6b567',
+          },
           parentId: { type: 'string', format: 'uuid', nullable: true, example: null },
           title: { type: 'string', example: 'Implement Teams & Subtasks REST Endpoints' },
-          description: { type: 'string', example: 'Add endpoints for team creation and task hierarchy' },
-          status: { type: 'string', enum: ['TODO', 'IN_PROGRESS', 'BLOCKED', 'DONE'], example: 'IN_PROGRESS' },
-          version: { type: 'integer', example: 1, description: 'Optimistic concurrency version counter' },
+          description: {
+            type: 'string',
+            example: 'Add endpoints for team creation and task hierarchy',
+          },
+          status: {
+            type: 'string',
+            enum: ['TODO', 'IN_PROGRESS', 'BLOCKED', 'DONE'],
+            example: 'IN_PROGRESS',
+          },
+          version: {
+            type: 'integer',
+            example: 1,
+            description: 'Optimistic concurrency version counter',
+          },
           createdAt: { type: 'string', format: 'date-time', example: '2026-11-23T08:35:00.000Z' },
           updatedAt: { type: 'string', format: 'date-time', example: '2026-11-23T08:40:00.000Z' },
           subtasks: {
@@ -202,9 +259,18 @@ export const openApiSpec = {
         type: 'object',
         properties: {
           id: { type: 'string', format: 'uuid', example: '4c84a8b0-4e55-46c6-a67b-1175c2e105a2' },
-          projectId: { type: 'string', format: 'uuid', example: '3fa85f64-5717-4562-b3fc-2c963f66afa6' },
+          projectId: {
+            type: 'string',
+            format: 'uuid',
+            example: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+          },
           name: { type: 'string', example: 'Phase 1 Public Beta Launch' },
-          dueAt: { type: 'string', format: 'date-time', nullable: true, example: '2026-12-15T00:00:00.000Z' },
+          dueAt: {
+            type: 'string',
+            format: 'date-time',
+            nullable: true,
+            example: '2026-12-15T00:00:00.000Z',
+          },
           createdAt: { type: 'string', format: 'date-time', example: '2026-11-23T08:45:00.000Z' },
         },
       },
@@ -212,8 +278,16 @@ export const openApiSpec = {
         type: 'object',
         properties: {
           id: { type: 'string', format: 'uuid', example: 'f1e2d3c4-b5a6-4789-9012-3456789abcde' },
-          taskId: { type: 'string', format: 'uuid', example: '9a22f3e4-6d9b-41f2-b7e1-8f5bc645e991' },
-          authorId: { type: 'string', format: 'uuid', example: 'c4b82d41-3b7d-472e-84cf-26f5f9bf723c' },
+          taskId: {
+            type: 'string',
+            format: 'uuid',
+            example: '9a22f3e4-6d9b-41f2-b7e1-8f5bc645e991',
+          },
+          authorId: {
+            type: 'string',
+            format: 'uuid',
+            example: 'c4b82d41-3b7d-472e-84cf-26f5f9bf723c',
+          },
           body: { type: 'string', example: 'API tests passing; ready for code review.' },
           createdAt: { type: 'string', format: 'date-time', example: '2026-11-23T09:00:00.000Z' },
         },
@@ -222,10 +296,22 @@ export const openApiSpec = {
         type: 'object',
         properties: {
           id: { type: 'string', format: 'uuid', example: 'aa11bb22-cc33-44dd-ee55-ff66aa77bb88' },
-          taskId: { type: 'string', format: 'uuid', example: '9a22f3e4-6d9b-41f2-b7e1-8f5bc645e991' },
-          actorId: { type: 'string', format: 'uuid', example: 'c4b82d41-3b7d-472e-84cf-26f5f9bf723c' },
+          taskId: {
+            type: 'string',
+            format: 'uuid',
+            example: '9a22f3e4-6d9b-41f2-b7e1-8f5bc645e991',
+          },
+          actorId: {
+            type: 'string',
+            format: 'uuid',
+            example: 'c4b82d41-3b7d-472e-84cf-26f5f9bf723c',
+          },
           action: { type: 'string', example: 'COMMENT_CREATED' },
-          metadata: { type: 'object', additionalProperties: true, example: { commentId: 'f1e2d3c4-b5a6-4789-9012-3456789abcde' } },
+          metadata: {
+            type: 'object',
+            additionalProperties: true,
+            example: { commentId: 'f1e2d3c4-b5a6-4789-9012-3456789abcde' },
+          },
           createdAt: { type: 'string', format: 'date-time', example: '2026-11-23T09:00:00.000Z' },
         },
       },
@@ -233,7 +319,11 @@ export const openApiSpec = {
         type: 'object',
         properties: {
           id: { type: 'string', format: 'uuid', example: '98765432-abcd-ef01-2345-6789abcdef01' },
-          taskId: { type: 'string', format: 'uuid', example: '9a22f3e4-6d9b-41f2-b7e1-8f5bc645e991' },
+          taskId: {
+            type: 'string',
+            format: 'uuid',
+            example: '9a22f3e4-6d9b-41f2-b7e1-8f5bc645e991',
+          },
           filename: { type: 'string', example: 'architecture_diagram.png' },
           contentType: { type: 'string', example: 'image/png' },
           sizeBytes: { type: 'integer', example: 1048576 },
@@ -254,7 +344,11 @@ export const openApiSpec = {
               deliverAt: { type: 'string', format: 'date-time' },
             },
           },
-          status: { type: 'string', enum: ['PENDING', 'PROCESSING', 'COMPLETED', 'FAILED'], example: 'PENDING' },
+          status: {
+            type: 'string',
+            enum: ['PENDING', 'PROCESSING', 'COMPLETED', 'FAILED'],
+            example: 'PENDING',
+          },
           runAt: { type: 'string', format: 'date-time', example: '2026-11-23T12:00:00.000Z' },
         },
       },
@@ -320,7 +414,8 @@ export const openApiSpec = {
       get: {
         tags: ['System'],
         summary: 'Application metrics & telemetry (Prometheus & JSON)',
-        description: 'Exposes telemetry tracking API request counts, latencies (p50/p90/p99), error rates, database/redis connectivity, queue lag, and system memory. Supports both Prometheus text format (default) and structured JSON (?format=json). Excludes all sensitive tenant data and PII.',
+        description:
+          'Exposes telemetry tracking API request counts, latencies (p50/p90/p99), error rates, database/redis connectivity, queue lag, and system memory. Supports both Prometheus text format (default) and structured JSON (?format=json). Excludes all sensitive tenant data and PII.',
         parameters: [
           {
             name: 'format',
@@ -336,7 +431,8 @@ export const openApiSpec = {
             content: {
               'text/plain': {
                 schema: { type: 'string' },
-                example: '# HELP worksphere_http_requests_total Total number of HTTP requests\nworksphere_http_requests_total 42\n',
+                example:
+                  '# HELP worksphere_http_requests_total Total number of HTTP requests\nworksphere_http_requests_total 42\n',
               },
               'application/json': {
                 example: {
@@ -349,7 +445,14 @@ export const openApiSpec = {
                     totalErrors: 0,
                     errorRatePercentage: 0,
                     statusClasses: { '2xx': 42, '3xx': 0, '4xx': 0, '5xx': 0 },
-                    latencyMs: { average: 12.5, min: 2.1, max: 45.0, p50: 10.0, p90: 25.0, p99: 40.0 },
+                    latencyMs: {
+                      average: 12.5,
+                      min: 2.1,
+                      max: 45.0,
+                      p50: 10.0,
+                      p90: 25.0,
+                      p99: 40.0,
+                    },
                   },
                   dependencies: {
                     database: { status: 'up', latencyMs: 2.3 },
@@ -366,7 +469,8 @@ export const openApiSpec = {
       post: {
         tags: ['Authentication'],
         summary: 'Register new user and tenant organization',
-        description: 'Creates a new user account, creates the root tenant organization, assigns the user the OWNER role, and issues a 15-minute access token and rotating refresh token.',
+        description:
+          'Creates a new user account, creates the root tenant organization, assigns the user the OWNER role, and issues a 15-minute access token and rotating refresh token.',
         requestBody: {
           required: true,
           content: {
@@ -376,9 +480,23 @@ export const openApiSpec = {
                 required: ['email', 'password', 'organizationName', 'organizationSlug'],
                 properties: {
                   email: { type: 'string', format: 'email', example: 'alice@acme.corp' },
-                  password: { type: 'string', minLength: 12, maxLength: 128, example: 'SuperSecurePassword123!' },
-                  organizationName: { type: 'string', minLength: 2, maxLength: 160, example: 'Acme Global Operations' },
-                  organizationSlug: { type: 'string', pattern: '^[a-z0-9-]{3,64}$', example: 'acme-global' },
+                  password: {
+                    type: 'string',
+                    minLength: 12,
+                    maxLength: 128,
+                    example: 'SuperSecurePassword123!',
+                  },
+                  organizationName: {
+                    type: 'string',
+                    minLength: 2,
+                    maxLength: 160,
+                    example: 'Acme Global Operations',
+                  },
+                  organizationSlug: {
+                    type: 'string',
+                    pattern: '^[a-z0-9-]{3,64}$',
+                    example: 'acme-global',
+                  },
                 },
               },
             },
@@ -397,7 +515,8 @@ export const openApiSpec = {
                       slug: 'acme-global',
                     },
                     accessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.payload.signature',
-                    refreshToken: 'b3f5c1d2e4a6890f1234567890abcdef1234567890abcdef1234567890abcdef',
+                    refreshToken:
+                      'b3f5c1d2e4a6890f1234567890abcdef1234567890abcdef1234567890abcdef',
                   },
                 },
               },
@@ -408,7 +527,12 @@ export const openApiSpec = {
             description: 'Email or organization slug already registered',
             content: {
               'application/json': {
-                example: { error: { code: 'REGISTRATION_CONFLICT', message: 'User or organization already exists' } },
+                example: {
+                  error: {
+                    code: 'REGISTRATION_CONFLICT',
+                    message: 'User or organization already exists',
+                  },
+                },
               },
             },
           },
@@ -419,7 +543,8 @@ export const openApiSpec = {
       post: {
         tags: ['Authentication'],
         summary: 'Authenticate with credentials',
-        description: 'Validates user email and password against argon2/scrypt hash, issues a 15-minute access token and rotating refresh token.',
+        description:
+          'Validates user email and password against argon2/scrypt hash, issues a 15-minute access token and rotating refresh token.',
         requestBody: {
           required: true,
           content: {
@@ -448,7 +573,8 @@ export const openApiSpec = {
                       slug: 'acme-global',
                     },
                     accessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.payload.signature',
-                    refreshToken: 'b3f5c1d2e4a6890f1234567890abcdef1234567890abcdef1234567890abcdef',
+                    refreshToken:
+                      'b3f5c1d2e4a6890f1234567890abcdef1234567890abcdef1234567890abcdef',
                   },
                 },
               },
@@ -459,7 +585,9 @@ export const openApiSpec = {
             description: 'Invalid email or password',
             content: {
               'application/json': {
-                example: { error: { code: 'INVALID_CREDENTIALS', message: 'Invalid email or password' } },
+                example: {
+                  error: { code: 'INVALID_CREDENTIALS', message: 'Invalid email or password' },
+                },
               },
             },
           },
@@ -470,7 +598,8 @@ export const openApiSpec = {
       post: {
         tags: ['Authentication'],
         summary: 'Rotate refresh token and get new access token',
-        description: 'Exchanges an unexpired refresh token for a new access token and rotating refresh token. The previous refresh token is invalidated.',
+        description:
+          'Exchanges an unexpired refresh token for a new access token and rotating refresh token. The previous refresh token is invalidated.',
         requestBody: {
           required: true,
           content: {
@@ -479,7 +608,10 @@ export const openApiSpec = {
                 type: 'object',
                 required: ['refreshToken'],
                 properties: {
-                  refreshToken: { type: 'string', example: 'b3f5c1d2e4a6890f1234567890abcdef1234567890abcdef1234567890abcdef' },
+                  refreshToken: {
+                    type: 'string',
+                    example: 'b3f5c1d2e4a6890f1234567890abcdef1234567890abcdef1234567890abcdef',
+                  },
                 },
               },
             },
@@ -493,7 +625,8 @@ export const openApiSpec = {
                 example: {
                   data: {
                     accessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.newPayload.newSignature',
-                    refreshToken: 'c4e6d2e5b7a8901f2345678901abcdef2345678901abcdef2345678901abcdef',
+                    refreshToken:
+                      'c4e6d2e5b7a8901f2345678901abcdef2345678901abcdef2345678901abcdef',
                   },
                 },
               },
@@ -516,7 +649,10 @@ export const openApiSpec = {
                 type: 'object',
                 required: ['refreshToken'],
                 properties: {
-                  refreshToken: { type: 'string', example: 'b3f5c1d2e4a6890f1234567890abcdef1234567890abcdef1234567890abcdef' },
+                  refreshToken: {
+                    type: 'string',
+                    example: 'b3f5c1d2e4a6890f1234567890abcdef1234567890abcdef1234567890abcdef',
+                  },
                 },
               },
             },
@@ -532,7 +668,8 @@ export const openApiSpec = {
         tags: ['Organizations'],
         security: [{ bearerAuth: [] }],
         summary: 'Get active organization profile',
-        description: 'Retrieves tenant organization details for the caller active authenticated organization context.',
+        description:
+          'Retrieves tenant organization details for the caller active authenticated organization context.',
         responses: {
           '200': {
             description: 'Current organization profile',
@@ -571,7 +708,10 @@ export const openApiSpec = {
                       userId: 'c4b82d41-3b7d-472e-84cf-26f5f9bf723c',
                       organizationId: '87e246cf-3069-42b4-82a1-fa4f91e6b567',
                       role: 'OWNER',
-                      user: { id: 'c4b82d41-3b7d-472e-84cf-26f5f9bf723c', email: 'alice@acme.corp' },
+                      user: {
+                        id: 'c4b82d41-3b7d-472e-84cf-26f5f9bf723c',
+                        email: 'alice@acme.corp',
+                      },
                     },
                     {
                       id: 'fa993102-1ac4-4672-9112-be224eac9012',
@@ -594,7 +734,8 @@ export const openApiSpec = {
         tags: ['Organizations'],
         security: [{ bearerAuth: [] }],
         summary: 'Invite new member to organization',
-        description: 'Issues a cryptographic invitation token for an email address. Restricted to OWNER and MANAGER roles.',
+        description:
+          'Issues a cryptographic invitation token for an email address. Restricted to OWNER and MANAGER roles.',
         requestBody: {
           required: true,
           content: {
@@ -604,7 +745,12 @@ export const openApiSpec = {
                 required: ['email'],
                 properties: {
                   email: { type: 'string', format: 'email', example: 'carol@acme.corp' },
-                  role: { type: 'string', enum: ['MANAGER', 'MEMBER', 'AUDITOR'], default: 'MEMBER', example: 'MEMBER' },
+                  role: {
+                    type: 'string',
+                    enum: ['MANAGER', 'MEMBER', 'AUDITOR'],
+                    default: 'MEMBER',
+                    example: 'MEMBER',
+                  },
                 },
               },
             },
@@ -637,7 +783,8 @@ export const openApiSpec = {
       post: {
         tags: ['Organizations'],
         summary: 'Accept an organization invitation',
-        description: 'Consumes an unexpired invitation token, attaching the user to the organization with the specified role.',
+        description:
+          'Consumes an unexpired invitation token, attaching the user to the organization with the specified role.',
         requestBody: {
           required: true,
           content: {
@@ -676,7 +823,9 @@ export const openApiSpec = {
             description: 'Invitation token invalid, expired, or user not found',
             content: {
               'application/json': {
-                example: { error: { code: 'INVALID_INVITATION', message: 'Invitation not found or expired' } },
+                example: {
+                  error: { code: 'INVALID_INVITATION', message: 'Invitation not found or expired' },
+                },
               },
             },
           },
@@ -688,7 +837,8 @@ export const openApiSpec = {
         tags: ['Teams'],
         security: [{ bearerAuth: [] }],
         summary: 'List organization teams',
-        description: 'Returns all teams belonging to the active tenant organization, including team member counts and member profiles.',
+        description:
+          'Returns all teams belonging to the active tenant organization, including team member counts and member profiles.',
         responses: {
           '200': {
             description: 'List of teams',
@@ -700,7 +850,8 @@ export const openApiSpec = {
                       id: '550e8400-e29b-41d4-a716-446655440000',
                       organizationId: '87e246cf-3069-42b4-82a1-fa4f91e6b567',
                       name: 'Frontend Platform Team',
-                      description: 'Engineers responsible for Next.js web application and design system',
+                      description:
+                        'Engineers responsible for Next.js web application and design system',
                       createdAt: '2026-11-23T08:15:00.000Z',
                       updatedAt: '2026-11-23T08:15:00.000Z',
                       members: [
@@ -709,7 +860,10 @@ export const openApiSpec = {
                           teamId: '550e8400-e29b-41d4-a716-446655440000',
                           userId: 'c4b82d41-3b7d-472e-84cf-26f5f9bf723c',
                           joinedAt: '2026-11-23T08:16:00.000Z',
-                          user: { id: 'c4b82d41-3b7d-472e-84cf-26f5f9bf723c', email: 'alice@acme.corp' },
+                          user: {
+                            id: 'c4b82d41-3b7d-472e-84cf-26f5f9bf723c',
+                            email: 'alice@acme.corp',
+                          },
                         },
                       ],
                     },
@@ -725,7 +879,8 @@ export const openApiSpec = {
         tags: ['Teams'],
         security: [{ bearerAuth: [] }],
         summary: 'Create a new team',
-        description: 'Creates a team within the active organization. Restricted to OWNER and MANAGER roles.',
+        description:
+          'Creates a team within the active organization. Restricted to OWNER and MANAGER roles.',
         requestBody: {
           required: true,
           content: {
@@ -734,8 +889,17 @@ export const openApiSpec = {
                 type: 'object',
                 required: ['name'],
                 properties: {
-                  name: { type: 'string', minLength: 1, maxLength: 160, example: 'DevOps & Infrastructure' },
-                  description: { type: 'string', maxLength: 4000, example: 'Kubernetes, CI/CD pipelines, and observability' },
+                  name: {
+                    type: 'string',
+                    minLength: 1,
+                    maxLength: 160,
+                    example: 'DevOps & Infrastructure',
+                  },
+                  description: {
+                    type: 'string',
+                    maxLength: 4000,
+                    example: 'Kubernetes, CI/CD pipelines, and observability',
+                  },
                 },
               },
             },
@@ -770,9 +934,16 @@ export const openApiSpec = {
         tags: ['Teams'],
         security: [{ bearerAuth: [] }],
         summary: 'Get team details by ID',
-        description: 'Retrieves a single team by ID scoped to the active organization, including enrolled team members.',
+        description:
+          'Retrieves a single team by ID scoped to the active organization, including enrolled team members.',
         parameters: [
-          { name: 'teamId', in: 'path', required: true, schema: { type: 'string', format: 'uuid' }, example: '550e8400-e29b-41d4-a716-446655440000' },
+          {
+            name: 'teamId',
+            in: 'path',
+            required: true,
+            schema: { type: 'string', format: 'uuid' },
+            example: '550e8400-e29b-41d4-a716-446655440000',
+          },
         ],
         responses: {
           '200': {
@@ -784,7 +955,8 @@ export const openApiSpec = {
                     id: '550e8400-e29b-41d4-a716-446655440000',
                     organizationId: '87e246cf-3069-42b4-82a1-fa4f91e6b567',
                     name: 'Frontend Platform Team',
-                    description: 'Engineers responsible for Next.js web application and design system',
+                    description:
+                      'Engineers responsible for Next.js web application and design system',
                     createdAt: '2026-11-23T08:15:00.000Z',
                     updatedAt: '2026-11-23T08:15:00.000Z',
                     members: [
@@ -793,7 +965,10 @@ export const openApiSpec = {
                         teamId: '550e8400-e29b-41d4-a716-446655440000',
                         userId: 'c4b82d41-3b7d-472e-84cf-26f5f9bf723c',
                         joinedAt: '2026-11-23T08:16:00.000Z',
-                        user: { id: 'c4b82d41-3b7d-472e-84cf-26f5f9bf723c', email: 'alice@acme.corp' },
+                        user: {
+                          id: 'c4b82d41-3b7d-472e-84cf-26f5f9bf723c',
+                          email: 'alice@acme.corp',
+                        },
                       },
                     ],
                   },
@@ -809,9 +984,16 @@ export const openApiSpec = {
         tags: ['Teams'],
         security: [{ bearerAuth: [] }],
         summary: 'Delete a team',
-        description: 'Removes a team and its member associations. Restricted to OWNER and MANAGER roles.',
+        description:
+          'Removes a team and its member associations. Restricted to OWNER and MANAGER roles.',
         parameters: [
-          { name: 'teamId', in: 'path', required: true, schema: { type: 'string', format: 'uuid' }, example: '550e8400-e29b-41d4-a716-446655440000' },
+          {
+            name: 'teamId',
+            in: 'path',
+            required: true,
+            schema: { type: 'string', format: 'uuid' },
+            example: '550e8400-e29b-41d4-a716-446655440000',
+          },
         ],
         responses: {
           '204': { description: 'Team successfully deleted' },
@@ -826,9 +1008,16 @@ export const openApiSpec = {
         tags: ['Teams'],
         security: [{ bearerAuth: [] }],
         summary: 'Add a user to a team',
-        description: 'Assigns an existing organization member to a team. Restricted to OWNER and MANAGER roles.',
+        description:
+          'Assigns an existing organization member to a team. Restricted to OWNER and MANAGER roles.',
         parameters: [
-          { name: 'teamId', in: 'path', required: true, schema: { type: 'string', format: 'uuid' }, example: '550e8400-e29b-41d4-a716-446655440000' },
+          {
+            name: 'teamId',
+            in: 'path',
+            required: true,
+            schema: { type: 'string', format: 'uuid' },
+            example: '550e8400-e29b-41d4-a716-446655440000',
+          },
         ],
         requestBody: {
           required: true,
@@ -838,7 +1027,11 @@ export const openApiSpec = {
                 type: 'object',
                 required: ['userId'],
                 properties: {
-                  userId: { type: 'string', format: 'uuid', example: 'c4b82d41-3b7d-472e-84cf-26f5f9bf723c' },
+                  userId: {
+                    type: 'string',
+                    format: 'uuid',
+                    example: 'c4b82d41-3b7d-472e-84cf-26f5f9bf723c',
+                  },
                 },
               },
             },
@@ -872,10 +1065,23 @@ export const openApiSpec = {
         tags: ['Teams'],
         security: [{ bearerAuth: [] }],
         summary: 'Remove a user from a team',
-        description: 'Removes the team membership for the specified user. Restricted to OWNER and MANAGER roles.',
+        description:
+          'Removes the team membership for the specified user. Restricted to OWNER and MANAGER roles.',
         parameters: [
-          { name: 'teamId', in: 'path', required: true, schema: { type: 'string', format: 'uuid' }, example: '550e8400-e29b-41d4-a716-446655440000' },
-          { name: 'userId', in: 'path', required: true, schema: { type: 'string', format: 'uuid' }, example: 'c4b82d41-3b7d-472e-84cf-26f5f9bf723c' },
+          {
+            name: 'teamId',
+            in: 'path',
+            required: true,
+            schema: { type: 'string', format: 'uuid' },
+            example: '550e8400-e29b-41d4-a716-446655440000',
+          },
+          {
+            name: 'userId',
+            in: 'path',
+            required: true,
+            schema: { type: 'string', format: 'uuid' },
+            example: 'c4b82d41-3b7d-472e-84cf-26f5f9bf723c',
+          },
         ],
         responses: {
           '204': { description: 'Member removed from team' },
@@ -892,7 +1098,13 @@ export const openApiSpec = {
         summary: 'List organization projects',
         description: 'Returns projects belonging to the active organization.',
         parameters: [
-          { name: 'limit', in: 'query', required: false, schema: { type: 'integer', default: 50, maximum: 100 }, example: 20 },
+          {
+            name: 'limit',
+            in: 'query',
+            required: false,
+            schema: { type: 'integer', default: 50, maximum: 100 },
+            example: 20,
+          },
         ],
         responses: {
           '200': {
@@ -905,7 +1117,8 @@ export const openApiSpec = {
                       id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
                       organizationId: '87e246cf-3069-42b4-82a1-fa4f91e6b567',
                       name: 'Core Platform Migration',
-                      description: 'Migrating legacy services to modern containerized microservices',
+                      description:
+                        'Migrating legacy services to modern containerized microservices',
                       createdAt: '2026-11-23T08:30:00.000Z',
                       updatedAt: '2026-11-23T08:30:00.000Z',
                     },
@@ -921,7 +1134,8 @@ export const openApiSpec = {
         tags: ['Projects'],
         security: [{ bearerAuth: [] }],
         summary: 'Create a project',
-        description: 'Creates a project in the caller active organization. Restricted to OWNER and MANAGER roles.',
+        description:
+          'Creates a project in the caller active organization. Restricted to OWNER and MANAGER roles.',
         requestBody: {
           required: true,
           content: {
@@ -930,8 +1144,17 @@ export const openApiSpec = {
                 type: 'object',
                 required: ['name'],
                 properties: {
-                  name: { type: 'string', minLength: 1, maxLength: 160, example: 'Core Platform Migration' },
-                  description: { type: 'string', maxLength: 4000, example: 'Migrating legacy services to modern containerized microservices' },
+                  name: {
+                    type: 'string',
+                    minLength: 1,
+                    maxLength: 160,
+                    example: 'Core Platform Migration',
+                  },
+                  description: {
+                    type: 'string',
+                    maxLength: 4000,
+                    example: 'Migrating legacy services to modern containerized microservices',
+                  },
                 },
               },
             },
@@ -968,7 +1191,13 @@ export const openApiSpec = {
         summary: 'Get project details',
         description: 'Retrieves a project by ID, verifying tenant isolation.',
         parameters: [
-          { name: 'projectId', in: 'path', required: true, schema: { type: 'string', format: 'uuid' }, example: '3fa85f64-5717-4562-b3fc-2c963f66afa6' },
+          {
+            name: 'projectId',
+            in: 'path',
+            required: true,
+            schema: { type: 'string', format: 'uuid' },
+            example: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+          },
         ],
         responses: {
           '200': {
@@ -998,7 +1227,13 @@ export const openApiSpec = {
         summary: 'Update project properties',
         description: 'Updates project name or description. Restricted to OWNER and MANAGER roles.',
         parameters: [
-          { name: 'projectId', in: 'path', required: true, schema: { type: 'string', format: 'uuid' }, example: '3fa85f64-5717-4562-b3fc-2c963f66afa6' },
+          {
+            name: 'projectId',
+            in: 'path',
+            required: true,
+            schema: { type: 'string', format: 'uuid' },
+            example: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+          },
         ],
         requestBody: {
           required: true,
@@ -1007,8 +1242,17 @@ export const openApiSpec = {
               schema: {
                 type: 'object',
                 properties: {
-                  name: { type: 'string', minLength: 1, maxLength: 160, example: 'Core Platform Migration (Q4)' },
-                  description: { type: 'string', maxLength: 4000, example: 'Updated scope for fourth quarter deliverables' },
+                  name: {
+                    type: 'string',
+                    minLength: 1,
+                    maxLength: 160,
+                    example: 'Core Platform Migration (Q4)',
+                  },
+                  description: {
+                    type: 'string',
+                    maxLength: 4000,
+                    example: 'Updated scope for fourth quarter deliverables',
+                  },
                 },
               },
             },
@@ -1042,9 +1286,16 @@ export const openApiSpec = {
         tags: ['Projects'],
         security: [{ bearerAuth: [] }],
         summary: 'Delete project',
-        description: 'Permanently removes a project and its associated resources. Restricted to OWNER role.',
+        description:
+          'Permanently removes a project and its associated resources. Restricted to OWNER role.',
         parameters: [
-          { name: 'projectId', in: 'path', required: true, schema: { type: 'string', format: 'uuid' }, example: '3fa85f64-5717-4562-b3fc-2c963f66afa6' },
+          {
+            name: 'projectId',
+            in: 'path',
+            required: true,
+            schema: { type: 'string', format: 'uuid' },
+            example: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+          },
         ],
         responses: {
           '204': { description: 'Project deleted successfully' },
@@ -1059,9 +1310,16 @@ export const openApiSpec = {
         tags: ['Projects'],
         security: [{ bearerAuth: [] }],
         summary: 'Get project task distribution analytics',
-        description: 'Aggregates task status counts and computes progress percentage. Proxies to Python FastAPI analytics microservice if available.',
+        description:
+          'Aggregates task status counts and computes progress percentage. Proxies to Python FastAPI analytics microservice if available.',
         parameters: [
-          { name: 'projectId', in: 'path', required: true, schema: { type: 'string', format: 'uuid' }, example: '3fa85f64-5717-4562-b3fc-2c963f66afa6' },
+          {
+            name: 'projectId',
+            in: 'path',
+            required: true,
+            schema: { type: 'string', format: 'uuid' },
+            example: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+          },
         ],
         responses: {
           '200': {
@@ -1092,7 +1350,13 @@ export const openApiSpec = {
         summary: 'List project milestones',
         description: 'Lists all milestones defined for the given project.',
         parameters: [
-          { name: 'projectId', in: 'path', required: true, schema: { type: 'string', format: 'uuid' }, example: '3fa85f64-5717-4562-b3fc-2c963f66afa6' },
+          {
+            name: 'projectId',
+            in: 'path',
+            required: true,
+            schema: { type: 'string', format: 'uuid' },
+            example: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+          },
         ],
         responses: {
           '200': {
@@ -1123,7 +1387,13 @@ export const openApiSpec = {
         summary: 'Create project milestone',
         description: 'Creates a milestone within a project. Restricted to OWNER and MANAGER roles.',
         parameters: [
-          { name: 'projectId', in: 'path', required: true, schema: { type: 'string', format: 'uuid' }, example: '3fa85f64-5717-4562-b3fc-2c963f66afa6' },
+          {
+            name: 'projectId',
+            in: 'path',
+            required: true,
+            schema: { type: 'string', format: 'uuid' },
+            example: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+          },
         ],
         requestBody: {
           required: true,
@@ -1133,8 +1403,17 @@ export const openApiSpec = {
                 type: 'object',
                 required: ['name'],
                 properties: {
-                  name: { type: 'string', minLength: 1, maxLength: 160, example: 'Phase 1 Public Beta Launch' },
-                  dueAt: { type: 'string', format: 'date-time', example: '2026-12-15T00:00:00.000Z' },
+                  name: {
+                    type: 'string',
+                    minLength: 1,
+                    maxLength: 160,
+                    example: 'Phase 1 Public Beta Launch',
+                  },
+                  dueAt: {
+                    type: 'string',
+                    format: 'date-time',
+                    example: '2026-12-15T00:00:00.000Z',
+                  },
                 },
               },
             },
@@ -1171,8 +1450,20 @@ export const openApiSpec = {
         summary: 'List project tasks',
         description: 'Returns tasks belonging to the specified project. Includes subtasks array.',
         parameters: [
-          { name: 'projectId', in: 'path', required: true, schema: { type: 'string', format: 'uuid' }, example: '3fa85f64-5717-4562-b3fc-2c963f66afa6' },
-          { name: 'limit', in: 'query', required: false, schema: { type: 'integer', default: 50, maximum: 100 }, example: 50 },
+          {
+            name: 'projectId',
+            in: 'path',
+            required: true,
+            schema: { type: 'string', format: 'uuid' },
+            example: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+          },
+          {
+            name: 'limit',
+            in: 'query',
+            required: false,
+            schema: { type: 'integer', default: 50, maximum: 100 },
+            example: 50,
+          },
         ],
         responses: {
           '200': {
@@ -1207,9 +1498,16 @@ export const openApiSpec = {
         tags: ['Tasks'],
         security: [{ bearerAuth: [] }],
         summary: 'Create a task in project',
-        description: 'Creates a task within the project. Supports optional parentId for subtask creation. Restricted to non-AUDITOR roles.',
+        description:
+          'Creates a task within the project. Supports optional parentId for subtask creation. Restricted to non-AUDITOR roles.',
         parameters: [
-          { name: 'projectId', in: 'path', required: true, schema: { type: 'string', format: 'uuid' }, example: '3fa85f64-5717-4562-b3fc-2c963f66afa6' },
+          {
+            name: 'projectId',
+            in: 'path',
+            required: true,
+            schema: { type: 'string', format: 'uuid' },
+            example: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+          },
         ],
         requestBody: {
           required: true,
@@ -1219,9 +1517,23 @@ export const openApiSpec = {
                 type: 'object',
                 required: ['title'],
                 properties: {
-                  title: { type: 'string', minLength: 1, maxLength: 200, example: 'Implement Teams & Subtasks REST Endpoints' },
-                  description: { type: 'string', maxLength: 4000, example: 'Add endpoints for team creation and task hierarchy' },
-                  status: { type: 'string', enum: ['TODO', 'IN_PROGRESS', 'BLOCKED', 'DONE'], default: 'TODO', example: 'TODO' },
+                  title: {
+                    type: 'string',
+                    minLength: 1,
+                    maxLength: 200,
+                    example: 'Implement Teams & Subtasks REST Endpoints',
+                  },
+                  description: {
+                    type: 'string',
+                    maxLength: 4000,
+                    example: 'Add endpoints for team creation and task hierarchy',
+                  },
+                  status: {
+                    type: 'string',
+                    enum: ['TODO', 'IN_PROGRESS', 'BLOCKED', 'DONE'],
+                    default: 'TODO',
+                    example: 'TODO',
+                  },
                   parentId: { type: 'string', format: 'uuid', nullable: true, example: null },
                 },
               },
@@ -1262,9 +1574,16 @@ export const openApiSpec = {
         tags: ['Tasks'],
         security: [{ bearerAuth: [] }],
         summary: 'Update task with optimistic concurrency',
-        description: 'Updates task title, description, or status. Requires current `version` integer in the body. If the version does not match the database version, returns HTTP 409 VERSION_CONFLICT.',
+        description:
+          'Updates task title, description, or status. Requires current `version` integer in the body. If the version does not match the database version, returns HTTP 409 VERSION_CONFLICT.',
         parameters: [
-          { name: 'taskId', in: 'path', required: true, schema: { type: 'string', format: 'uuid' }, example: '9a22f3e4-6d9b-41f2-b7e1-8f5bc645e991' },
+          {
+            name: 'taskId',
+            in: 'path',
+            required: true,
+            schema: { type: 'string', format: 'uuid' },
+            example: '9a22f3e4-6d9b-41f2-b7e1-8f5bc645e991',
+          },
         ],
         requestBody: {
           required: true,
@@ -1274,10 +1593,28 @@ export const openApiSpec = {
                 type: 'object',
                 required: ['version'],
                 properties: {
-                  version: { type: 'integer', minimum: 1, example: 1, description: 'Current known version of the task' },
-                  title: { type: 'string', minLength: 1, maxLength: 200, example: 'Implement Teams & Subtasks REST Endpoints (Refined)' },
-                  description: { type: 'string', maxLength: 4000, example: 'Complete unit test coverage for hierarchy' },
-                  status: { type: 'string', enum: ['TODO', 'IN_PROGRESS', 'BLOCKED', 'DONE'], example: 'DONE' },
+                  version: {
+                    type: 'integer',
+                    minimum: 1,
+                    example: 1,
+                    description: 'Current known version of the task',
+                  },
+                  title: {
+                    type: 'string',
+                    minLength: 1,
+                    maxLength: 200,
+                    example: 'Implement Teams & Subtasks REST Endpoints (Refined)',
+                  },
+                  description: {
+                    type: 'string',
+                    maxLength: 4000,
+                    example: 'Complete unit test coverage for hierarchy',
+                  },
+                  status: {
+                    type: 'string',
+                    enum: ['TODO', 'IN_PROGRESS', 'BLOCKED', 'DONE'],
+                    example: 'DONE',
+                  },
                 },
               },
             },
@@ -1315,9 +1652,16 @@ export const openApiSpec = {
         tags: ['Tasks'],
         security: [{ bearerAuth: [] }],
         summary: 'Delete task',
-        description: 'Permanently deletes a task and associated comments, activity logs, and subtasks. Restricted to OWNER and MANAGER roles.',
+        description:
+          'Permanently deletes a task and associated comments, activity logs, and subtasks. Restricted to OWNER and MANAGER roles.',
         parameters: [
-          { name: 'taskId', in: 'path', required: true, schema: { type: 'string', format: 'uuid' }, example: '9a22f3e4-6d9b-41f2-b7e1-8f5bc645e991' },
+          {
+            name: 'taskId',
+            in: 'path',
+            required: true,
+            schema: { type: 'string', format: 'uuid' },
+            example: '9a22f3e4-6d9b-41f2-b7e1-8f5bc645e991',
+          },
         ],
         responses: {
           '204': { description: 'Task deleted successfully' },
@@ -1334,7 +1678,13 @@ export const openApiSpec = {
         summary: 'List subtasks for a task',
         description: 'Retrieves all child tasks where parentId equals taskId.',
         parameters: [
-          { name: 'taskId', in: 'path', required: true, schema: { type: 'string', format: 'uuid' }, example: '9a22f3e4-6d9b-41f2-b7e1-8f5bc645e991' },
+          {
+            name: 'taskId',
+            in: 'path',
+            required: true,
+            schema: { type: 'string', format: 'uuid' },
+            example: '9a22f3e4-6d9b-41f2-b7e1-8f5bc645e991',
+          },
         ],
         responses: {
           '200': {
@@ -1368,9 +1718,16 @@ export const openApiSpec = {
         tags: ['Tasks'],
         security: [{ bearerAuth: [] }],
         summary: 'Create a subtask',
-        description: 'Creates a child task under the specified parent taskId, automatically inheriting the parent projectId and organizationId.',
+        description:
+          'Creates a child task under the specified parent taskId, automatically inheriting the parent projectId and organizationId.',
         parameters: [
-          { name: 'taskId', in: 'path', required: true, schema: { type: 'string', format: 'uuid' }, example: '9a22f3e4-6d9b-41f2-b7e1-8f5bc645e991' },
+          {
+            name: 'taskId',
+            in: 'path',
+            required: true,
+            schema: { type: 'string', format: 'uuid' },
+            example: '9a22f3e4-6d9b-41f2-b7e1-8f5bc645e991',
+          },
         ],
         requestBody: {
           required: true,
@@ -1380,9 +1737,23 @@ export const openApiSpec = {
                 type: 'object',
                 required: ['title'],
                 properties: {
-                  title: { type: 'string', minLength: 1, maxLength: 200, example: 'Draft OpenAPI spec module' },
-                  description: { type: 'string', maxLength: 4000, example: 'Define models and endpoints' },
-                  status: { type: 'string', enum: ['TODO', 'IN_PROGRESS', 'BLOCKED', 'DONE'], default: 'TODO', example: 'TODO' },
+                  title: {
+                    type: 'string',
+                    minLength: 1,
+                    maxLength: 200,
+                    example: 'Draft OpenAPI spec module',
+                  },
+                  description: {
+                    type: 'string',
+                    maxLength: 4000,
+                    example: 'Define models and endpoints',
+                  },
+                  status: {
+                    type: 'string',
+                    enum: ['TODO', 'IN_PROGRESS', 'BLOCKED', 'DONE'],
+                    default: 'TODO',
+                    example: 'TODO',
+                  },
                 },
               },
             },
@@ -1422,9 +1793,16 @@ export const openApiSpec = {
         tags: ['Collaboration'],
         security: [{ bearerAuth: [] }],
         summary: 'Add a comment to task',
-        description: 'Appends a comment to a task and automatically creates an audit activity log entry.',
+        description:
+          'Appends a comment to a task and automatically creates an audit activity log entry.',
         parameters: [
-          { name: 'taskId', in: 'path', required: true, schema: { type: 'string', format: 'uuid' }, example: '9a22f3e4-6d9b-41f2-b7e1-8f5bc645e991' },
+          {
+            name: 'taskId',
+            in: 'path',
+            required: true,
+            schema: { type: 'string', format: 'uuid' },
+            example: '9a22f3e4-6d9b-41f2-b7e1-8f5bc645e991',
+          },
         ],
         requestBody: {
           required: true,
@@ -1434,7 +1812,12 @@ export const openApiSpec = {
                 type: 'object',
                 required: ['body'],
                 properties: {
-                  body: { type: 'string', minLength: 1, maxLength: 5000, example: 'Verified endpoint behavior in local test suite.' },
+                  body: {
+                    type: 'string',
+                    minLength: 1,
+                    maxLength: 5000,
+                    example: 'Verified endpoint behavior in local test suite.',
+                  },
                 },
               },
             },
@@ -1468,9 +1851,16 @@ export const openApiSpec = {
         tags: ['Collaboration'],
         security: [{ bearerAuth: [] }],
         summary: 'Get task audit activity log',
-        description: 'Returns chronological activity events (comment creation, status changes, updates) for a task.',
+        description:
+          'Returns chronological activity events (comment creation, status changes, updates) for a task.',
         parameters: [
-          { name: 'taskId', in: 'path', required: true, schema: { type: 'string', format: 'uuid' }, example: '9a22f3e4-6d9b-41f2-b7e1-8f5bc645e991' },
+          {
+            name: 'taskId',
+            in: 'path',
+            required: true,
+            schema: { type: 'string', format: 'uuid' },
+            example: '9a22f3e4-6d9b-41f2-b7e1-8f5bc645e991',
+          },
         ],
         responses: {
           '200': {
@@ -1502,9 +1892,16 @@ export const openApiSpec = {
         tags: ['Collaboration'],
         security: [{ bearerAuth: [] }],
         summary: 'Register task attachment metadata',
-        description: 'Stores metadata and pre-signed reference for file attachments associated with a task.',
+        description:
+          'Stores metadata and pre-signed reference for file attachments associated with a task.',
         parameters: [
-          { name: 'taskId', in: 'path', required: true, schema: { type: 'string', format: 'uuid' }, example: '9a22f3e4-6d9b-41f2-b7e1-8f5bc645e991' },
+          {
+            name: 'taskId',
+            in: 'path',
+            required: true,
+            schema: { type: 'string', format: 'uuid' },
+            example: '9a22f3e4-6d9b-41f2-b7e1-8f5bc645e991',
+          },
         ],
         requestBody: {
           required: true,
@@ -1514,7 +1911,12 @@ export const openApiSpec = {
                 type: 'object',
                 required: ['filename', 'contentType', 'sizeBytes'],
                 properties: {
-                  filename: { type: 'string', minLength: 1, maxLength: 255, example: 'architecture_diagram.png' },
+                  filename: {
+                    type: 'string',
+                    minLength: 1,
+                    maxLength: 255,
+                    example: 'architecture_diagram.png',
+                  },
                   contentType: { type: 'string', example: 'image/png' },
                   sizeBytes: { type: 'integer', minimum: 1, maximum: 52428800, example: 1048576 },
                 },
@@ -1551,9 +1953,16 @@ export const openApiSpec = {
         tags: ['Notifications'],
         security: [{ bearerAuth: [] }],
         summary: 'Schedule a task reminder',
-        description: 'Schedules an asynchronous task reminder job via persistent transactional outbox pattern. Emits a notification outbox event.',
+        description:
+          'Schedules an asynchronous task reminder job via persistent transactional outbox pattern. Emits a notification outbox event.',
         parameters: [
-          { name: 'taskId', in: 'path', required: true, schema: { type: 'string', format: 'uuid' }, example: '9a22f3e4-6d9b-41f2-b7e1-8f5bc645e991' },
+          {
+            name: 'taskId',
+            in: 'path',
+            required: true,
+            schema: { type: 'string', format: 'uuid' },
+            example: '9a22f3e4-6d9b-41f2-b7e1-8f5bc645e991',
+          },
         ],
         requestBody: {
           required: true,
@@ -1563,8 +1972,17 @@ export const openApiSpec = {
                 type: 'object',
                 required: ['idempotencyKey', 'deliverAt'],
                 properties: {
-                  idempotencyKey: { type: 'string', minLength: 1, maxLength: 128, example: 'reminder-user-123-task-456-step-1' },
-                  deliverAt: { type: 'string', format: 'date-time', example: '2026-11-24T09:00:00.000Z' },
+                  idempotencyKey: {
+                    type: 'string',
+                    minLength: 1,
+                    maxLength: 128,
+                    example: 'reminder-user-123-task-456-step-1',
+                  },
+                  deliverAt: {
+                    type: 'string',
+                    format: 'date-time',
+                    example: '2026-11-24T09:00:00.000Z',
+                  },
                 },
               },
             },
@@ -1597,7 +2015,8 @@ export const openApiSpec = {
       get: {
         tags: ['Real-Time & Updates'],
         summary: 'Subscribe to real-time events via Server-Sent Events (SSE)',
-        description: 'Streams live task changes, comments, subtasks, and notification events scoped to the authenticated user\'s organization. Supports reconnection via Last-Event-ID header and token query parameter fallback for standard browser EventSource.',
+        description:
+          "Streams live task changes, comments, subtasks, and notification events scoped to the authenticated user's organization. Supports reconnection via Last-Event-ID header and token query parameter fallback for standard browser EventSource.",
         security: [{ bearerAuth: [] }],
         parameters: [
           {
@@ -1612,7 +2031,8 @@ export const openApiSpec = {
             in: 'query',
             required: false,
             schema: { type: 'string' },
-            description: 'Bearer token query parameter fallback for standard browser EventSource connections',
+            description:
+              'Bearer token query parameter fallback for standard browser EventSource connections',
           },
         ],
         responses: {
@@ -1622,7 +2042,8 @@ export const openApiSpec = {
               'text/event-stream': {
                 schema: {
                   type: 'string',
-                  example: 'id: 123e4567-e89b-12d3-a456-426614174000\nevent: task.created\ndata: {"id":"123","type":"task.created","payload":{"id":"task-1","title":"New Task"}}\n\n',
+                  example:
+                    'id: 123e4567-e89b-12d3-a456-426614174000\nevent: task.created\ndata: {"id":"123","type":"task.created","payload":{"id":"task-1","title":"New Task"}}\n\n',
                 },
               },
             },
@@ -1637,7 +2058,10 @@ export const openApiSpec = {
 /**
  * Generates interactive Swagger UI HTML page pointing to the given OpenAPI JSON endpoint.
  */
-export function renderSwaggerUiHtml(specUrl = '/api/v1/openapi.json', title = 'WorkSphere API Documentation'): string {
+export function renderSwaggerUiHtml(
+  specUrl = '/api/v1/openapi.json',
+  title = 'WorkSphere API Documentation',
+): string {
   return `<!DOCTYPE html>
 <html lang="en">
 <head>

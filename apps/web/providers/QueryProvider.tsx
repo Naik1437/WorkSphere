@@ -20,9 +20,5 @@ export function QueryProvider({ children }: { children: React.ReactNode }) {
   // Ensure each request/client session has its own QueryClient instance
   const [queryClient] = useState(() => createQueryClient());
 
-  return (
-    <QueryClientProvider client={queryClient}>
-      {children}
-    </QueryClientProvider>
-  );
+  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 }

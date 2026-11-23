@@ -17,7 +17,9 @@ describe('TaskCard Component (A01-R10, A12-R01)', () => {
     render(<TaskCard task={sampleTask} />);
 
     expect(screen.getByText('Configure Vitest Test Suite')).toBeInTheDocument();
-    expect(screen.getByText('Set up testing library and test runner for React 19 web app')).toBeInTheDocument();
+    expect(
+      screen.getByText('Set up testing library and test runner for React 19 web app'),
+    ).toBeInTheDocument();
     expect(screen.getByTestId('task-status-badge')).toHaveTextContent('To Do');
   });
 

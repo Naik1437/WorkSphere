@@ -153,7 +153,12 @@ export class TaskService {
     return subtask;
   }
 
-  public async addComment(taskId: string, organizationId: string, content: string, authorId: string) {
+  public async addComment(
+    taskId: string,
+    organizationId: string,
+    content: string,
+    authorId: string,
+  ) {
     const task = await this.taskRepo.findById(taskId, organizationId);
     if (!task) return null;
 

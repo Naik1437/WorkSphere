@@ -22,7 +22,8 @@ export function useTasksQuery(
     enabled?: boolean;
   },
 ) {
-  const apiBase = options?.apiBaseUrl || process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:4000/api/v1';
+  const apiBase =
+    options?.apiBaseUrl || process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:4000/api/v1';
 
   return useQuery({
     queryKey: queryKeys.tasks.list(projectId),
@@ -41,7 +42,7 @@ export function useTasksQuery(
         throw new Error(`Failed to fetch tasks: HTTP ${res.status}`);
       }
       const data = await res.json();
-      return Array.isArray(data) ? data : data.tasks ?? [];
+      return Array.isArray(data) ? data : (data.tasks ?? []);
     },
     enabled: Boolean(projectId) && options?.enabled !== false && Boolean(options?.token),
     staleTime: 15 * 1000, // 15 seconds fresh

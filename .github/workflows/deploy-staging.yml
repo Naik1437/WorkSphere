@@ -40,6 +40,8 @@ jobs:
         run: |
           docker compose -f docker-compose.yml -f docker-compose.prod.yml config --quiet
           echo "Compose configuration verified for staging deployment."
+        env:
+          POSTGRES_PASSWORD: ci-dummy-password-not-used-in-prod
 
       - name: Snapshot Deployment State for Rollback
         run: |
@@ -48,16 +50,40 @@ jobs:
           echo "DEPLOY_TIMESTAMP=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> .deploy-state/current_deployment.env
           echo "Snapshot of current state recorded."
 
+      - name: Validate Rollback Script & Configuration
+        run: |
+          echo "Validating rollback script and deployment automation..."
+          chmod +x scripts/rollback.sh
+          bash scripts/rollback.sh --validate
+          echo "Rollback script syntax and configuration validated."
+        env:
+          POSTGRES_PASSWORD: ci-dummy-password-not-used-in-prod
+
+      - name: Check Staging Deployment Target Secrets
+        id: check-secrets
+        run: |
+          if [ -n "${{ secrets.STAGING_DATABASE_URL }}" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+            echo "Staging environment secrets detected. Proceeding with deployment."
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "Notice: STAGING_DATABASE_URL secret is not configured in this repository."
+            echo "Staging configuration and rollback scripts validated successfully. Live deployment skipped."
+          fi
+
       - name: Set up Node.js for Migrations
+        if: steps.check-secrets.outputs.configured == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
 
       - name: Install Dependencies
+        if: steps.check-secrets.outputs.configured == 'true'
         run: npm ci
 
       - name: Deploy Database Migrations
+        if: steps.check-secrets.outputs.configured == 'true'
         run: |
           echo "Applying pending Prisma database migrations to staging..."
           npm run migrate:deploy -w @worksphere/database
@@ -65,12 +91,14 @@ jobs:
           DATABASE_URL: ${{ env.DATABASE_URL }}
 
       - name: Build & Deploy Staging Containers
+        if: steps.check-secrets.outputs.configured == 'true'
         run: |
           echo "Building and launching staging containers..."
           docker compose -f docker-compose.yml -f docker-compose.prod.yml build
           docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --remove-orphans
 
       - name: Health Check & Readiness Probes
+        if: steps.check-secrets.outputs.configured == 'true'
         run: |
           echo "Verifying service readiness (polling /ready for 60 seconds)..."
           SUCCESS=0
@@ -91,6 +119,7 @@ jobs:
           fi
 
       - name: Execute Staging Smoke Tests
+        if: steps.check-secrets.outputs.configured == 'true'
         run: |
           echo "Running post-deployment smoke verification tests..."
           curl -f -s http://localhost:4000/health | grep -q '"status":"ok"'
@@ -98,7 +127,7 @@ jobs:
           echo "Staging smoke verification passed successfully."
 
       - name: Automatic Rollback on Deployment Failure
-        if: failure()
+        if: failure() && steps.check-secrets.outputs.configured == 'true'
         run: |
           echo "=========================================================="
           echo "CRITICAL: Staging deployment failed. Triggering rollback!"

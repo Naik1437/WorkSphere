@@ -5,11 +5,13 @@
 ## Changes
 
 <!-- Itemized list of specific changes, new features, bug fixes, or refactoring. -->
-- 
+
+-
 
 ## Testing
 
 <!-- Describe how these changes were tested (unit, integration, manual, or E2E). -->
+
 - [ ] Unit tests added/updated (`npm test` / `pytest`)
 - [ ] Type checks passed (`npm run typecheck`)
 - [ ] Linting passed (`npm run lint`)

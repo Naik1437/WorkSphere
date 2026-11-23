@@ -20,8 +20,8 @@ assignees: ''
 
 ## Acceptance Criteria
 
-- [ ] Criterion 1: 
-- [ ] Criterion 2: 
+- [ ] Criterion 1:
+- [ ] Criterion 2:
 - [ ] Automated tests cover the main success path and expected boundary failure cases.
 - [ ] Multi-tenant data isolation is strictly enforced.
 - [ ] API documentation (OpenAPI) and relevant guides are updated.

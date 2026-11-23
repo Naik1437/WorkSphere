@@ -36,7 +36,9 @@ export function MetricCard({
   };
 
   return (
-    <div className={`rounded-xl border border-gray-200 border-l-4 bg-white p-5 shadow-sm ${accentClasses[accentColor]}`}>
+    <div
+      className={`rounded-xl border border-gray-200 border-l-4 bg-white p-5 shadow-sm ${accentClasses[accentColor]}`}
+    >
       <div className="flex items-center justify-between">
         <span className="text-sm font-medium text-gray-500">{label}</span>
         {change && (

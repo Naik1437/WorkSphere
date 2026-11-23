@@ -61,7 +61,14 @@ describe('React Query Data Hooks (A01-R08)', () => {
 
   it('useTasksQuery fetches task list for specific project', async () => {
     const mockTasks = [
-      { id: 'task-1', title: 'Task One', status: 'TODO', version: 1, projectId: 'proj-1', createdAt: '2026-11-23' },
+      {
+        id: 'task-1',
+        title: 'Task One',
+        status: 'TODO',
+        version: 1,
+        projectId: 'proj-1',
+        createdAt: '2026-11-23',
+      },
     ];
 
     (fetch as any).mockResolvedValueOnce({

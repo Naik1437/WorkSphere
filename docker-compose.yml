@@ -4,7 +4,7 @@ services:
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-worksphere}
       POSTGRES_USER: ${POSTGRES_USER:-worksphere}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me-before-sharing}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -30,7 +30,8 @@ services:
     build:
       context: .
       dockerfile: apps/api/Dockerfile
-    command: ['npx', 'prisma', 'migrate', 'deploy', '--schema=packages/database/prisma/schema.prisma']
+    command:
+      ['npx', 'prisma', 'migrate', 'deploy', '--schema=packages/database/prisma/schema.prisma']
     env_file: .env
     environment:
       DATABASE_URL: ${DATABASE_URL:-postgresql://worksphere:change-me-before-sharing@postgres:5432/worksphere?schema=public}
@@ -174,7 +175,7 @@ services:
     networks: [backend]
 
   minio:
-    profiles: ["integrations"]
+    profiles: ['integrations']
     image: minio/minio:RELEASE.2024-11-07T00-52-28Z
     command: server /data --console-address ":9001"
     environment:
@@ -194,7 +195,7 @@ services:
     networks: [backend]
 
   mailpit:
-    profiles: ["integrations"]
+    profiles: ['integrations']
     image: axllent/mailpit:v1.21.8
     ports:
       - '1025:1025'

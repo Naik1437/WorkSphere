@@ -28,7 +28,11 @@ export function TaskFilterBar({
   return (
     <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-slate-900 border border-slate-800 rounded-xl p-3">
       {/* Status pills */}
-      <div className="flex flex-wrap items-center gap-1.5" role="group" aria-label="Filter tasks by status">
+      <div
+        className="flex flex-wrap items-center gap-1.5"
+        role="group"
+        aria-label="Filter tasks by status"
+      >
         {filterOptions.map((opt) => {
           const isActive = statusFilter === opt.value;
           return (

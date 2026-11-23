@@ -156,7 +156,9 @@ describe('A15-R05 through A15-R11: Incident Response Drills', () => {
 
       const mockDb = {
         task: {
-          findFirst: vi.fn().mockResolvedValue({ id: 'task-1', project: { organizationId: 'org-1' } }),
+          findFirst: vi
+            .fn()
+            .mockResolvedValue({ id: 'task-1', project: { organizationId: 'org-1' } }),
         },
         job: {
           upsert: vi.fn().mockImplementation(async ({ where, create }) => {
@@ -212,7 +214,11 @@ describe('A15-R05 through A15-R11: Incident Response Drills', () => {
       );
 
       // Attacker token belonging to org-alpha
-      const attackerToken = createToken({ sub: 'attacker-1', organizationId: 'org-alpha', role: 'MEMBER' });
+      const attackerToken = createToken({
+        sub: 'attacker-1',
+        organizationId: 'org-alpha',
+        role: 'MEMBER',
+      });
 
       const res = await request(app)
         .get('/api/v1/projects/proj-beta')
@@ -311,7 +317,9 @@ describe('A15-R05 through A15-R11: Incident Response Drills', () => {
       };
 
       const failingWebhook: WebhookAdapter = {
-        dispatch: vi.fn().mockRejectedValue(new Error('Webhook endpoint returned HTTP 500 Internal Error')),
+        dispatch: vi
+          .fn()
+          .mockRejectedValue(new Error('Webhook endpoint returned HTTP 500 Internal Error')),
       };
 
       const webhookJob = {

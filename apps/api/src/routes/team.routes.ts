@@ -13,9 +13,21 @@ export function createTeamRouter(
   const { authenticate, requireDb, requireRole } = middleware;
 
   router.get('/teams', authenticate, requireDb, teamController.listTeams);
-  router.post('/teams', authenticate, requireDb, requireRole(['OWNER', 'MANAGER']), teamController.createTeam);
+  router.post(
+    '/teams',
+    authenticate,
+    requireDb,
+    requireRole(['OWNER', 'MANAGER']),
+    teamController.createTeam,
+  );
   router.get('/teams/:teamId/members', authenticate, requireDb, teamController.listMembers);
-  router.post('/teams/:teamId/members', authenticate, requireDb, requireRole(['OWNER', 'MANAGER']), teamController.addMember);
+  router.post(
+    '/teams/:teamId/members',
+    authenticate,
+    requireDb,
+    requireRole(['OWNER', 'MANAGER']),
+    teamController.addMember,
+  );
 
   return router;
 }

@@ -15,7 +15,11 @@ export class ProjectService {
     return this.projectRepo.findById(id, organizationId);
   }
 
-  public async createProject(organizationId: string, data: { name: string; description?: string }, actorId?: string) {
+  public async createProject(
+    organizationId: string,
+    data: { name: string; description?: string },
+    actorId?: string,
+  ) {
     const project = await this.projectRepo.create({
       name: data.name,
       description: data.description,
@@ -72,7 +76,11 @@ export class ProjectService {
     return this.projectRepo.listMilestones(projectId);
   }
 
-  public async createMilestone(projectId: string, organizationId: string, data: { title: string; dueAt?: Date }) {
+  public async createMilestone(
+    projectId: string,
+    organizationId: string,
+    data: { title: string; dueAt?: Date },
+  ) {
     const project = await this.projectRepo.findById(projectId, organizationId);
     if (!project) return null;
     return this.projectRepo.createMilestone({

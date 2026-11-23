@@ -8,7 +8,10 @@ describe('AuthCard Component (A01-R10, A12-R01)', () => {
     render(<AuthCard onSubmit={vi.fn()} />);
 
     expect(screen.getByRole('tab', { name: /sign in/i })).toHaveAttribute('aria-selected', 'true');
-    expect(screen.getByRole('tab', { name: /create organization/i })).toHaveAttribute('aria-selected', 'false');
+    expect(screen.getByRole('tab', { name: /create organization/i })).toHaveAttribute(
+      'aria-selected',
+      'false',
+    );
 
     expect(screen.getByLabelText(/email address/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
@@ -26,7 +29,9 @@ describe('AuthCard Component (A01-R10, A12-R01)', () => {
     expect(registerTab).toHaveAttribute('aria-selected', 'true');
     expect(screen.getByLabelText(/organization name/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/organization slug/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /create enterprise workspace/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: /create enterprise workspace/i }),
+    ).toBeInTheDocument();
   });
 
   it('validates password length under 12 characters and displays alert', async () => {

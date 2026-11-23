@@ -21,7 +21,8 @@ export function useTeamsQuery(options?: {
   organizationId?: string;
   enabled?: boolean;
 }) {
-  const apiBase = options?.apiBaseUrl || process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:4000/api/v1';
+  const apiBase =
+    options?.apiBaseUrl || process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:4000/api/v1';
 
   return useQuery({
     queryKey: queryKeys.teams.list(options?.organizationId),
@@ -38,7 +39,7 @@ export function useTeamsQuery(options?: {
         throw new Error(`Failed to fetch teams: HTTP ${res.status}`);
       }
       const data = await res.json();
-      return Array.isArray(data) ? data : data.teams ?? [];
+      return Array.isArray(data) ? data : (data.teams ?? []);
     },
     enabled: options?.enabled !== false && Boolean(options?.token),
     staleTime: 60 * 1000,

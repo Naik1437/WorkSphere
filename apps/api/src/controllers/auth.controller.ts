@@ -15,7 +15,9 @@ export class AuthController {
       });
       const input = schema.safeParse(req.body);
       if (!input.success) {
-        return res.status(400).json({ error: { code: 'INVALID_INPUT', details: input.error.errors } });
+        return res
+          .status(400)
+          .json({ error: { code: 'INVALID_INPUT', details: input.error.errors } });
       }
 
       try {
@@ -40,7 +42,9 @@ export class AuthController {
       });
       const input = schema.safeParse(req.body);
       if (!input.success) {
-        return res.status(400).json({ error: { code: 'INVALID_INPUT', details: input.error.errors } });
+        return res
+          .status(400)
+          .json({ error: { code: 'INVALID_INPUT', details: input.error.errors } });
       }
 
       const result = await this.authService.login(input.data);

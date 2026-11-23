@@ -12,12 +12,7 @@ export interface EmptyStateProps {
  * React Server Component: Empty state illustration and prompt.
  * Pure presentation rendered at compile-time on server without client hooks.
  */
-export function EmptyState({
-  title,
-  description,
-  actionText,
-  actionHref,
-}: EmptyStateProps) {
+export function EmptyState({ title, description, actionText, actionHref }: EmptyStateProps) {
   return (
     <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-300 bg-gray-50/50 p-10 text-center">
       <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 text-gray-400">

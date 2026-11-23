@@ -32,7 +32,8 @@ export class TaskController {
       }
 
       const status = typeof req.query.status === 'string' ? req.query.status : undefined;
-      const assignedId = typeof req.query.assignedId === 'string' ? req.query.assignedId : undefined;
+      const assignedId =
+        typeof req.query.assignedId === 'string' ? req.query.assignedId : undefined;
       const tasks = await this.taskService.listTasks(projectId, status, assignedId);
       return res.json({ data: tasks });
     } catch (err) {
@@ -62,7 +63,9 @@ export class TaskController {
       });
       const input = schema.safeParse(req.body);
       if (!input.success) {
-        return res.status(400).json({ error: { code: 'INVALID_INPUT', details: input.error.errors } });
+        return res
+          .status(400)
+          .json({ error: { code: 'INVALID_INPUT', details: input.error.errors } });
       }
 
       try {
@@ -78,7 +81,12 @@ export class TaskController {
         return res.status(201).json({ data: task });
       } catch (err: any) {
         if (err.message === 'INVALID_PARENT_TASK') {
-          return res.status(400).json({ error: { code: 'INVALID_PARENT_TASK', message: 'Parent task must belong to the same project' } });
+          return res.status(400).json({
+            error: {
+              code: 'INVALID_PARENT_TASK',
+              message: 'Parent task must belong to the same project',
+            },
+          });
         }
         throw err;
       }
@@ -102,7 +110,9 @@ export class TaskController {
       });
       const input = schema.safeParse(req.body);
       if (!input.success) {
-        return res.status(400).json({ error: { code: 'INVALID_INPUT', details: input.error.errors } });
+        return res
+          .status(400)
+          .json({ error: { code: 'INVALID_INPUT', details: input.error.errors } });
       }
 
       try {
@@ -116,10 +126,14 @@ export class TaskController {
         return res.json({ data: updated });
       } catch (err: any) {
         if (err.message === 'INVALID_PARENT_TASK') {
-          return res.status(400).json({ error: { code: 'INVALID_PARENT_TASK', message: 'Invalid parent task' } });
+          return res
+            .status(400)
+            .json({ error: { code: 'INVALID_PARENT_TASK', message: 'Invalid parent task' } });
         }
         if (err.message === 'VERSION_CONFLICT') {
-          return res.status(409).json({ error: { code: 'VERSION_CONFLICT', message: 'Task changed; reload before retrying' } });
+          return res.status(409).json({
+            error: { code: 'VERSION_CONFLICT', message: 'Task changed; reload before retrying' },
+          });
         }
         throw err;
       }
@@ -135,7 +149,11 @@ export class TaskController {
       if (!['OWNER', 'MANAGER'].includes(identity.role)) {
         return res.status(403).json({ error: { code: 'FORBIDDEN' } });
       }
-      const task = await this.taskService.deleteTask(taskId, identity?.organizationId, identity?.userId);
+      const task = await this.taskService.deleteTask(
+        taskId,
+        identity?.organizationId,
+        identity?.userId,
+      );
       if (!task) return res.status(404).json({ error: { code: 'NOT_FOUND' } });
       return res.status(204).end();
     } catch (err) {
@@ -170,7 +188,9 @@ export class TaskController {
       });
       const input = schema.safeParse(req.body);
       if (!input.success) {
-        return res.status(400).json({ error: { code: 'INVALID_INPUT', details: input.error.errors } });
+        return res
+          .status(400)
+          .json({ error: { code: 'INVALID_INPUT', details: input.error.errors } });
       }
 
       const subtask = await this.taskService.createSubtask(
@@ -194,16 +214,20 @@ export class TaskController {
       const task = await this.taskService.getTask(taskId, identity?.organizationId);
       if (!task) return res.status(404).json({ error: { code: 'NOT_FOUND' } });
 
-      const schema = z.object({
-        content: z.string().min(1).max(4000).optional(),
-        body: z.string().min(1).max(4000).optional(),
-      }).refine((data) => Boolean(data.content || data.body), {
-        message: 'Must provide content or body',
-      });
+      const schema = z
+        .object({
+          content: z.string().min(1).max(4000).optional(),
+          body: z.string().min(1).max(4000).optional(),
+        })
+        .refine((data) => Boolean(data.content || data.body), {
+          message: 'Must provide content or body',
+        });
 
       const input = schema.safeParse(req.body);
       if (!input.success) {
-        return res.status(400).json({ error: { code: 'INVALID_INPUT', details: input.error.errors } });
+        return res
+          .status(400)
+          .json({ error: { code: 'INVALID_INPUT', details: input.error.errors } });
       }
 
       const text = (input.data.body || input.data.content)!;

@@ -145,7 +145,9 @@ export class SmtpEmailAdapter implements EmailAdapter {
       };
 
       socket.on('error', fail);
-      socket.on('timeout', () => fail(new Error(`SMTP connection timed out after ${this.config.timeoutMs}ms`)));
+      socket.on('timeout', () =>
+        fail(new Error(`SMTP connection timed out after ${this.config.timeoutMs}ms`)),
+      );
 
       let stage = 0;
       socket.on('data', (data: string) => {
@@ -222,7 +224,6 @@ export function createEmailAdapterFromEnv(
   return new ConsoleEmailAdapter();
 }
 
-
 /**
  * Calendar Event Item representing a project task or milestone.
  */
@@ -240,7 +241,10 @@ export interface CalendarEventItem {
  * Formats a Date into standard iCalendar RFC 5545 UTC timestamp (YYYYMMDDTHHMMSSZ).
  */
 export function formatIcsDate(date: Date): string {
-  return date.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+  return date
+    .toISOString()
+    .replace(/[-:]/g, '')
+    .replace(/\.\d{3}/, '');
 }
 
 /**

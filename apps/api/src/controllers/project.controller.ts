@@ -35,7 +35,9 @@ export class ProjectController {
       });
       const input = schema.safeParse(req.body);
       if (!input.success) {
-        return res.status(400).json({ error: { code: 'INVALID_INPUT', details: input.error.errors } });
+        return res
+          .status(400)
+          .json({ error: { code: 'INVALID_INPUT', details: input.error.errors } });
       }
 
       const identity = (req as any).identity;
@@ -59,7 +61,9 @@ export class ProjectController {
       });
       const input = schema.safeParse(req.body);
       if (!input.success) {
-        return res.status(400).json({ error: { code: 'INVALID_INPUT', details: input.error.errors } });
+        return res
+          .status(400)
+          .json({ error: { code: 'INVALID_INPUT', details: input.error.errors } });
       }
 
       const identity = (req as any).identity;
@@ -96,7 +100,10 @@ export class ProjectController {
     try {
       const projectId = req.params.projectId as string;
       const identity = (req as any).identity;
-      const milestones = await this.projectService.listMilestones(projectId, identity.organizationId);
+      const milestones = await this.projectService.listMilestones(
+        projectId,
+        identity.organizationId,
+      );
       if (!milestones) return res.status(404).json({ error: { code: 'NOT_FOUND' } });
       return res.json({ data: milestones });
     } catch (err) {
@@ -113,7 +120,9 @@ export class ProjectController {
       });
       const input = schema.safeParse(req.body);
       if (!input.success) {
-        return res.status(400).json({ error: { code: 'INVALID_INPUT', details: input.error.errors } });
+        return res
+          .status(400)
+          .json({ error: { code: 'INVALID_INPUT', details: input.error.errors } });
       }
 
       const identity = (req as any).identity;

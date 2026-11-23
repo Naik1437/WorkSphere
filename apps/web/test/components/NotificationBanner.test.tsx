@@ -5,9 +5,7 @@ import { NotificationBanner } from '../../components/NotificationBanner';
 
 describe('NotificationBanner Component (A01-R10, A12-R01)', () => {
   it('does not render when notification is null', () => {
-    const { container } = render(
-      <NotificationBanner notification={null} onDismiss={vi.fn()} />,
-    );
+    const { container } = render(<NotificationBanner notification={null} onDismiss={vi.fn()} />);
     expect(container).toBeEmptyDOMElement();
   });
 

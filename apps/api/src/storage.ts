@@ -28,9 +28,7 @@ export interface StorageAdapter {
     expiresInSeconds?: number;
   }): Promise<PresignedDownloadResult>;
 
-  deleteObject(input: {
-    storageKey: string;
-  }): Promise<{ deleted: boolean }>;
+  deleteObject(input: { storageKey: string }): Promise<{ deleted: boolean }>;
 }
 
 export interface S3Config {
@@ -61,7 +59,10 @@ export function generateAwsSigV4PresignedUrl(options: {
   const expiresIn = options.expiresInSeconds ?? 900;
   const now = new Date();
   const datestamp = now.toISOString().slice(0, 10).replace(/-/g, '');
-  const amzDate = now.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+  const amzDate = now
+    .toISOString()
+    .replace(/[-:]/g, '')
+    .replace(/\.\d{3}/, '');
 
   const baseEndpoint = (options.publicUrl || options.endpoint).replace(/\/$/, '');
   const urlObj = new URL(baseEndpoint);
@@ -145,9 +146,7 @@ export function sanitizeStorageKey(
   taskId: string,
   filename: string,
 ): string {
-  const safeFilename = filename
-    .replace(/\.\.+/g, '_')
-    .replace(/[^a-zA-Z0-9._-]/g, '_');
+  const safeFilename = filename.replace(/\.\.+/g, '_').replace(/[^a-zA-Z0-9._-]/g, '_');
   const safeOrgId = organizationId.replace(/[^a-zA-Z0-9-]/g, '');
   const safeTaskId = taskId.replace(/[^a-zA-Z0-9-]/g, '');
   return `tenants/${safeOrgId}/tasks/${safeTaskId}/${randomUUID()}-${safeFilename}`;
@@ -286,7 +285,9 @@ export class SimulatedStorageAdapter implements StorageAdapter {
 /**
  * Creates the appropriate StorageAdapter based on environment variables.
  */
-export function createStorageAdapterFromEnv(env: Record<string, string | undefined> = process.env): StorageAdapter {
+export function createStorageAdapterFromEnv(
+  env: Record<string, string | undefined> = process.env,
+): StorageAdapter {
   const driver = (env.STORAGE_DRIVER || '').toLowerCase();
   const endpoint = env.STORAGE_ENDPOINT || env.MINIO_ENDPOINT;
   const bucket = env.STORAGE_BUCKET || env.S3_BUCKET;

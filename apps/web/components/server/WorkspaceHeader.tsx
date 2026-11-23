@@ -23,7 +23,10 @@ export function WorkspaceHeader({
     <header className="border-b border-gray-200 bg-white px-6 py-4 shadow-sm">
       <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <nav aria-label="Breadcrumbs" className="mb-1 flex items-center gap-1.5 text-xs text-gray-500">
+          <nav
+            aria-label="Breadcrumbs"
+            className="mb-1 flex items-center gap-1.5 text-xs text-gray-500"
+          >
             {breadcrumbs.map((crumb, idx) => (
               <React.Fragment key={crumb}>
                 {idx > 0 && <span className="text-gray-400">/</span>}

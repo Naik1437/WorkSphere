@@ -121,9 +121,7 @@ describe('Metrics and Monitoring (A14-R08)', () => {
 
       await request(app).get('/health');
 
-      const res = await request(app)
-        .get('/metrics')
-        .set('Accept', 'application/json');
+      const res = await request(app).get('/metrics').set('Accept', 'application/json');
 
       expect(res.status).toBe(200);
       expect(res.header['content-type']).toContain('application/json');
@@ -286,7 +284,10 @@ describe('Metrics and Monitoring (A14-R08)', () => {
       // Perform requests containing sensitive bearer headers
       await request(app)
         .get('/api/v1/projects')
-        .set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.sensitive-token-payload');
+        .set(
+          'Authorization',
+          'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.sensitive-token-payload',
+        );
 
       const textRes = await request(app).get('/metrics');
       const jsonRes = await request(app).get('/metrics?format=json');

@@ -41,7 +41,9 @@ describe('A14-R07: Database Backup & Restore Procedures', () => {
     expect(restorePs1Content).toContain('$TargetDb -eq $primaryDb -and -not $Force');
     expect(restorePs1Content).toContain('TARGET DATABASE IS THE ACTIVE PRIMARY DATABASE');
 
-    expect(restoreShContent).toContain('[ "${TARGET_DB}" = "${PRIMARY_DB}" ] && [ "${FORCE}" != "--force" ]');
+    expect(restoreShContent).toContain(
+      '[ "${TARGET_DB}" = "${PRIMARY_DB}" ] && [ "${FORCE}" != "--force" ]',
+    );
     expect(restoreShContent).toContain('TARGET DATABASE IS THE ACTIVE PRIMARY DATABASE');
   });
 
@@ -83,7 +85,9 @@ describe('A14-R07: Database Backup & Restore Procedures', () => {
     expect(drillPs1Content).toContain('$primaryTables.Count -eq $restoredTables.Count');
 
     // Drill script must verify row counts on critical tables
-    expect(drillPs1Content).toContain('$criticalTables = @("users", "organizations", "projects", "tasks", "memberships")');
+    expect(drillPs1Content).toContain(
+      '$criticalTables = @("users", "organizations", "projects", "tasks", "memberships")',
+    );
 
     // Drill script must safely drop the temporary database leaving primary untouched
     expect(drillPs1Content).toContain('DROP DATABASE');

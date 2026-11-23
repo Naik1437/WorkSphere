@@ -24,7 +24,6 @@ export function createIntegrationRouter(dependencies: {
   const storage = dependencies.storageAdapter ?? createStorageAdapterFromEnv();
   const billing = dependencies.billingAdapter ?? createBillingAdapterFromEnv();
 
-
   // Calendar Export (.ics)
   router.get(
     ['/projects/:projectId/calendar.ics', '/projects/:projectId/calendar'],
@@ -101,7 +100,9 @@ export function createIntegrationRouter(dependencies: {
           })
           .safeParse(req.body);
         if (!input.success) {
-          return res.status(400).json({ error: { code: 'INVALID_INPUT', details: input.error.flatten() } });
+          return res
+            .status(400)
+            .json({ error: { code: 'INVALID_INPUT', details: input.error.flatten() } });
         }
 
         const job = await db.job.create({
@@ -170,83 +171,78 @@ export function createIntegrationRouter(dependencies: {
   });
 
   // Project Analytics Integration
-  router.get(
-    '/projects/:projectId/analytics',
-    authenticate,
-    requireDb,
-    async (req, res, next) => {
+  router.get('/projects/:projectId/analytics', authenticate, requireDb, async (req, res, next) => {
+    try {
+      const identity = (req as any).identity;
+      const project = await db.project.findFirst({
+        where: { id: req.params.projectId, organizationId: identity.organizationId },
+        include: { tasks: true },
+      });
+      if (!project) return res.status(404).json({ error: { code: 'NOT_FOUND' } });
+
+      const taskSnapshots = (project.tasks ?? []).map((task: any) => {
+        const cycleDays =
+          task.status === 'DONE' && task.createdAt && task.updatedAt
+            ? Math.max(
+                0,
+                Math.round(
+                  ((new Date(task.updatedAt).getTime() - new Date(task.createdAt).getTime()) /
+                    (1000 * 60 * 60 * 24)) *
+                    100,
+                ) / 100,
+              )
+            : null;
+        return {
+          status: task.status,
+          estimate_hours: 1,
+          cycle_days: cycleDays,
+          due_date: task.dueAt ? new Date(task.dueAt).toISOString().split('T')[0] : null,
+        };
+      });
+
+      const analyticsUrl = config.ANALYTICS_SERVICE_URL ?? 'http://127.0.0.1:8000';
+      let analyticsData: any = null;
       try {
-        const identity = (req as any).identity;
-        const project = await db.project.findFirst({
-          where: { id: req.params.projectId, organizationId: identity.organizationId },
-          include: { tasks: true },
-        });
-        if (!project) return res.status(404).json({ error: { code: 'NOT_FOUND' } });
-
-        const taskSnapshots = (project.tasks ?? []).map((task: any) => {
-          const cycleDays =
-            task.status === 'DONE' && task.createdAt && task.updatedAt
-              ? Math.max(
-                  0,
-                  Math.round(
-                    ((new Date(task.updatedAt).getTime() - new Date(task.createdAt).getTime()) /
-                      (1000 * 60 * 60 * 24)) *
-                      100,
-                  ) / 100,
-                )
-              : null;
-          return {
-            status: task.status,
-            estimate_hours: 1,
-            cycle_days: cycleDays,
-            due_date: task.dueAt ? new Date(task.dueAt).toISOString().split('T')[0] : null,
-          };
-        });
-
-        const analyticsUrl = config.ANALYTICS_SERVICE_URL ?? 'http://127.0.0.1:8000';
-        let analyticsData: any = null;
-        try {
-          const headers: Record<string, string> = { 'content-type': 'application/json' };
-          if (config.ANALYTICS_SERVICE_TOKEN) {
-            headers['x-service-token'] = config.ANALYTICS_SERVICE_TOKEN;
-          }
-          const response = await fetch(`${analyticsUrl}/api/v1/analytics/projects`, {
-            method: 'POST',
-            headers,
-            body: JSON.stringify({ tasks: taskSnapshots }),
-          });
-          if (response.ok) {
-            analyticsData = await response.json();
-          }
-        } catch {
-          // Fallback to internal aggregation
+        const headers: Record<string, string> = { 'content-type': 'application/json' };
+        if (config.ANALYTICS_SERVICE_TOKEN) {
+          headers['x-service-token'] = config.ANALYTICS_SERVICE_TOKEN;
         }
-
-        if (!analyticsData) {
-          const counts: Record<string, number> = {};
-          let completedCount = 0;
-          for (const task of project.tasks ?? []) {
-            const s = (task.status || '').toLowerCase();
-            counts[s] = (counts[s] ?? 0) + 1;
-            if (s === 'done') completedCount++;
-          }
-          const total = (project.tasks ?? []).length;
-          analyticsData = {
-            total_tasks: total,
-            by_status: counts,
-            completion_rate: total ? Math.round((completedCount / total) * 10000) / 10000 : 0,
-            estimated_hours: total,
-            average_cycle_days: null,
-            fallback: true,
-          };
+        const response = await fetch(`${analyticsUrl}/api/v1/analytics/projects`, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({ tasks: taskSnapshots }),
+        });
+        if (response.ok) {
+          analyticsData = await response.json();
         }
-
-        return res.json({ data: analyticsData, meta: { projectId: project.id } });
-      } catch (error) {
-        return next(error);
+      } catch {
+        // Fallback to internal aggregation
       }
-    },
-  );
+
+      if (!analyticsData) {
+        const counts: Record<string, number> = {};
+        let completedCount = 0;
+        for (const task of project.tasks ?? []) {
+          const s = (task.status || '').toLowerCase();
+          counts[s] = (counts[s] ?? 0) + 1;
+          if (s === 'done') completedCount++;
+        }
+        const total = (project.tasks ?? []).length;
+        analyticsData = {
+          total_tasks: total,
+          by_status: counts,
+          completion_rate: total ? Math.round((completedCount / total) * 10000) / 10000 : 0,
+          estimated_hours: total,
+          average_cycle_days: null,
+          fallback: true,
+        };
+      }
+
+      return res.json({ data: analyticsData, meta: { projectId: project.id } });
+    } catch (error) {
+      return next(error);
+    }
+  });
 
   // -------------------------------------------------------------
   // Object Storage / Attachments (A08-R02)
@@ -262,7 +258,9 @@ export function createIntegrationRouter(dependencies: {
         })
         .safeParse(req.body);
       if (!input.success) {
-        return res.status(400).json({ error: { code: 'INVALID_INPUT', details: input.error.flatten() } });
+        return res
+          .status(400)
+          .json({ error: { code: 'INVALID_INPUT', details: input.error.flatten() } });
       }
 
       const task = await db.task.findFirst({
@@ -320,57 +318,68 @@ export function createIntegrationRouter(dependencies: {
     }
   });
 
-  router.get('/tasks/:taskId/attachments/:attachmentId/download', authenticate, requireDb, async (req, res, next) => {
-    try {
-      const identity = (req as any).identity;
-      const task = await db.task.findFirst({
-        where: { id: req.params.taskId, project: { organizationId: identity.organizationId } },
-      });
-      if (!task) return res.status(404).json({ error: { code: 'NOT_FOUND' } });
+  router.get(
+    '/tasks/:taskId/attachments/:attachmentId/download',
+    authenticate,
+    requireDb,
+    async (req, res, next) => {
+      try {
+        const identity = (req as any).identity;
+        const task = await db.task.findFirst({
+          where: { id: req.params.taskId, project: { organizationId: identity.organizationId } },
+        });
+        if (!task) return res.status(404).json({ error: { code: 'NOT_FOUND' } });
 
-      const attachment = await db.attachment.findFirst({
-        where: { id: req.params.attachmentId, taskId: task.id },
-      });
-      if (!attachment) return res.status(404).json({ error: { code: 'NOT_FOUND' } });
+        const attachment = await db.attachment.findFirst({
+          where: { id: req.params.attachmentId, taskId: task.id },
+        });
+        if (!attachment) return res.status(404).json({ error: { code: 'NOT_FOUND' } });
 
-      const presignedDownload = await storage.getDownloadUrl({
-        storageKey: attachment.storageKey,
-      });
+        const presignedDownload = await storage.getDownloadUrl({
+          storageKey: attachment.storageKey,
+        });
 
-      return res.status(200).json({
-        data: {
-          downloadUrl: presignedDownload.downloadUrl,
-          expiresInSeconds: presignedDownload.expiresInSeconds,
-          filename: attachment.filename,
-          contentType: attachment.contentType,
-        },
-      });
-    } catch (error) {
-      return next(error);
-    }
-  });
+        return res.status(200).json({
+          data: {
+            downloadUrl: presignedDownload.downloadUrl,
+            expiresInSeconds: presignedDownload.expiresInSeconds,
+            filename: attachment.filename,
+            contentType: attachment.contentType,
+          },
+        });
+      } catch (error) {
+        return next(error);
+      }
+    },
+  );
 
-  router.delete('/tasks/:taskId/attachments/:attachmentId', authenticate, requireDb, requireRole(['OWNER', 'MANAGER', 'MEMBER']), async (req, res, next) => {
-    try {
-      const identity = (req as any).identity;
-      const task = await db.task.findFirst({
-        where: { id: req.params.taskId, project: { organizationId: identity.organizationId } },
-      });
-      if (!task) return res.status(404).json({ error: { code: 'NOT_FOUND' } });
+  router.delete(
+    '/tasks/:taskId/attachments/:attachmentId',
+    authenticate,
+    requireDb,
+    requireRole(['OWNER', 'MANAGER', 'MEMBER']),
+    async (req, res, next) => {
+      try {
+        const identity = (req as any).identity;
+        const task = await db.task.findFirst({
+          where: { id: req.params.taskId, project: { organizationId: identity.organizationId } },
+        });
+        if (!task) return res.status(404).json({ error: { code: 'NOT_FOUND' } });
 
-      const attachment = await db.attachment.findFirst({
-        where: { id: req.params.attachmentId, taskId: task.id },
-      });
-      if (!attachment) return res.status(404).json({ error: { code: 'NOT_FOUND' } });
+        const attachment = await db.attachment.findFirst({
+          where: { id: req.params.attachmentId, taskId: task.id },
+        });
+        if (!attachment) return res.status(404).json({ error: { code: 'NOT_FOUND' } });
 
-      await storage.deleteObject({ storageKey: attachment.storageKey });
-      await db.attachment.delete({ where: { id: attachment.id } });
+        await storage.deleteObject({ storageKey: attachment.storageKey });
+        await db.attachment.delete({ where: { id: attachment.id } });
 
-      return res.status(200).json({ data: { id: attachment.id, deleted: true } });
-    } catch (error) {
-      return next(error);
-    }
-  });
+        return res.status(200).json({ data: { id: attachment.id, deleted: true } });
+      } catch (error) {
+        return next(error);
+      }
+    },
+  );
 
   // -------------------------------------------------------------
   // Billing Scope / Sandbox Stripe Integration (A08-R06)
@@ -379,33 +388,47 @@ export function createIntegrationRouter(dependencies: {
     return res.status(200).json({ data: billing.getPlans() });
   });
 
-  router.post('/billing/checkout', authenticate, requireDb, requireRole(['OWNER']), async (req, res, next) => {
-    try {
-      const identity = (req as any).identity;
-      const input = z
-        .object({
-          planId: z.enum(['FREE', 'PRO', 'ENTERPRISE']),
-          successUrl: z.string().url().default('http://localhost:3000/settings/billing?success=true'),
-          cancelUrl: z.string().url().default('http://localhost:3000/settings/billing?cancelled=true'),
-        })
-        .safeParse(req.body);
+  router.post(
+    '/billing/checkout',
+    authenticate,
+    requireDb,
+    requireRole(['OWNER']),
+    async (req, res, next) => {
+      try {
+        const identity = (req as any).identity;
+        const input = z
+          .object({
+            planId: z.enum(['FREE', 'PRO', 'ENTERPRISE']),
+            successUrl: z
+              .string()
+              .url()
+              .default('http://localhost:3000/settings/billing?success=true'),
+            cancelUrl: z
+              .string()
+              .url()
+              .default('http://localhost:3000/settings/billing?cancelled=true'),
+          })
+          .safeParse(req.body);
 
-      if (!input.success) {
-        return res.status(400).json({ error: { code: 'INVALID_INPUT', details: input.error.flatten() } });
+        if (!input.success) {
+          return res
+            .status(400)
+            .json({ error: { code: 'INVALID_INPUT', details: input.error.flatten() } });
+        }
+
+        const session = await billing.createCheckoutSession({
+          organizationId: identity.organizationId,
+          planId: input.data.planId as PlanTier,
+          successUrl: input.data.successUrl,
+          cancelUrl: input.data.cancelUrl,
+        });
+
+        return res.status(200).json({ data: session });
+      } catch (error) {
+        return next(error);
       }
-
-      const session = await billing.createCheckoutSession({
-        organizationId: identity.organizationId,
-        planId: input.data.planId as PlanTier,
-        successUrl: input.data.successUrl,
-        cancelUrl: input.data.cancelUrl,
-      });
-
-      return res.status(200).json({ data: session });
-    } catch (error) {
-      return next(error);
-    }
-  });
+    },
+  );
 
   router.post('/billing/webhook', requireDb, async (req, res, next) => {
     try {
@@ -414,7 +437,9 @@ export function createIntegrationRouter(dependencies: {
       const parsed = billing.verifyAndParseWebhook(rawBody, sigHeader);
 
       if (!parsed.valid || !parsed.event) {
-        return res.status(401).json({ error: { code: 'INVALID_SIGNATURE', message: parsed.error } });
+        return res
+          .status(401)
+          .json({ error: { code: 'INVALID_SIGNATURE', message: parsed.error } });
       }
 
       try {
@@ -426,7 +451,9 @@ export function createIntegrationRouter(dependencies: {
             payload: parsed.event.data,
           },
         });
-        return res.status(200).json({ received: true, eventId: event.id, event: parsed.event.type });
+        return res
+          .status(200)
+          .json({ received: true, eventId: event.id, event: parsed.event.type });
       } catch (err: any) {
         if (err?.code === 'P2002') {
           return res.status(200).json({ status: 'duplicate_ignored' });

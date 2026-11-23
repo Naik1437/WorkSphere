@@ -87,8 +87,7 @@ export function createSystemRouter(dependencies: {
     }
 
     let queueMetrics:
-      | { pendingJobs: number; retryingJobs: number; deadLetterJobs: number }
-      | undefined;
+      { pendingJobs: number; retryingJobs: number; deadLetterJobs: number } | undefined;
     if (deps?.database?.job?.count) {
       try {
         const [pending, retrying, deadLetter] = await Promise.all([

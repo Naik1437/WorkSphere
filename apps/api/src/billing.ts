@@ -20,16 +20,28 @@ export const WORKSPHERE_PLANS: Record<PlanTier, SubscriptionPlan> = {
     priceMonthlyUsd: 0,
     maxMembers: 5,
     maxProjects: 10,
-    features: ['Kanban & List views', 'Activity audit stream', 'Community forum support', 'Basic webhooks'],
+    features: [
+      'Kanban & List views',
+      'Activity audit stream',
+      'Community forum support',
+      'Basic webhooks',
+    ],
   },
   PRO: {
     id: 'PRO',
     name: 'WorkSphere Professional',
-    description: 'Advanced project orchestration, analytics, and integrations for growing companies.',
+    description:
+      'Advanced project orchestration, analytics, and integrations for growing companies.',
     priceMonthlyUsd: 29,
     maxMembers: 25,
     maxProjects: 100,
-    features: ['Everything in Free', 'S3/MinIO attachment storage', 'Python analytics engine', 'Real-time SSE events', 'Priority email support'],
+    features: [
+      'Everything in Free',
+      'S3/MinIO attachment storage',
+      'Python analytics engine',
+      'Real-time SSE events',
+      'Priority email support',
+    ],
   },
   ENTERPRISE: {
     id: 'ENTERPRISE',
@@ -38,7 +50,13 @@ export const WORKSPHERE_PLANS: Record<PlanTier, SubscriptionPlan> = {
     priceMonthlyUsd: 199,
     maxMembers: -1, // Unlimited
     maxProjects: -1, // Unlimited
-    features: ['Everything in Pro', 'Unlimited members & projects', 'Full audit logging', 'Custom role-based permissions', '24/7 dedicated SLA support'],
+    features: [
+      'Everything in Pro',
+      'Unlimited members & projects',
+      'Full audit logging',
+      'Custom role-based permissions',
+      '24/7 dedicated SLA support',
+    ],
   },
 };
 
