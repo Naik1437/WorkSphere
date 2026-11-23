@@ -278,6 +278,7 @@ export class SimulatedStorageAdapter implements StorageAdapter {
   }
 
   async deleteObject(_input: { storageKey: string }): Promise<{ deleted: boolean }> {
+    void _input;
     return { deleted: true };
   }
 }

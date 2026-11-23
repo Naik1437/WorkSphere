@@ -12,7 +12,7 @@ export class TaskController {
   public getTask = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const taskId = req.params.taskId as string;
-      const identity = (req as any).identity;
+      const identity = req.identity;
       const task = await this.taskService.getTask(taskId, identity?.organizationId);
       if (!task) return res.status(404).json({ error: { code: 'NOT_FOUND' } });
       return res.json({ data: task });
@@ -24,10 +24,13 @@ export class TaskController {
   public listTasks = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const projectId = req.params.projectId as string;
-      const identity = (req as any).identity;
+      const identity = req.identity;
 
       if (this.projectService) {
-        const project = await this.projectService.getProject(projectId, identity.organizationId);
+        const project = await this.projectService.getProject(
+          projectId,
+          identity?.organizationId ?? '',
+        );
         if (!project) return res.status(404).json({ error: { code: 'NOT_FOUND' } });
       }
 
@@ -44,14 +47,15 @@ export class TaskController {
   public createTask = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const projectId = req.params.projectId as string;
-      const identity = (req as any).identity;
+      const identity = req.identity;
 
       if (identity?.role === 'AUDITOR') {
         return res.status(403).json({ error: { code: 'FORBIDDEN' } });
       }
 
+      const orgId = identity?.organizationId ?? '';
       if (this.projectService) {
-        const project = await this.projectService.getProject(projectId, identity.organizationId);
+        const project = await this.projectService.getProject(projectId, orgId);
         if (!project) return res.status(404).json({ error: { code: 'NOT_FOUND' } });
       }
 
@@ -75,12 +79,13 @@ export class TaskController {
           projectId,
           assignedId: input.data.assignedId,
           parentId: input.data.parentId,
-          organizationId: identity?.organizationId,
+          organizationId: orgId,
           actorId: identity?.userId ?? 'system',
         });
         return res.status(201).json({ data: task });
-      } catch (err: any) {
-        if (err.message === 'INVALID_PARENT_TASK') {
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : '';
+        if (message === 'INVALID_PARENT_TASK') {
           return res.status(400).json({
             error: {
               code: 'INVALID_PARENT_TASK',
@@ -98,7 +103,7 @@ export class TaskController {
   public updateTask = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const taskId = req.params.taskId as string;
-      const identity = (req as any).identity;
+      const identity = req.identity;
 
       const schema = z.object({
         version: z.number().int().positive(),
@@ -118,19 +123,20 @@ export class TaskController {
       try {
         const updated = await this.taskService.updateTask(
           taskId,
-          identity?.organizationId,
+          identity?.organizationId ?? '',
           input.data,
           identity?.userId ?? 'system',
         );
         if (!updated) return res.status(404).json({ error: { code: 'NOT_FOUND' } });
         return res.json({ data: updated });
-      } catch (err: any) {
-        if (err.message === 'INVALID_PARENT_TASK') {
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : '';
+        if (message === 'INVALID_PARENT_TASK') {
           return res
             .status(400)
             .json({ error: { code: 'INVALID_PARENT_TASK', message: 'Invalid parent task' } });
         }
-        if (err.message === 'VERSION_CONFLICT') {
+        if (message === 'VERSION_CONFLICT') {
           return res.status(409).json({
             error: { code: 'VERSION_CONFLICT', message: 'Task changed; reload before retrying' },
           });
@@ -145,8 +151,8 @@ export class TaskController {
   public deleteTask = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const taskId = req.params.taskId as string;
-      const identity = (req as any).identity;
-      if (!['OWNER', 'MANAGER'].includes(identity.role)) {
+      const identity = req.identity;
+      if (!identity || !['OWNER', 'MANAGER'].includes(identity.role)) {
         return res.status(403).json({ error: { code: 'FORBIDDEN' } });
       }
       const task = await this.taskService.deleteTask(
@@ -164,8 +170,8 @@ export class TaskController {
   public listSubtasks = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const taskId = req.params.taskId as string;
-      const identity = (req as any).identity;
-      const subtasks = await this.taskService.listSubtasks(taskId, identity?.organizationId);
+      const identity = req.identity;
+      const subtasks = await this.taskService.listSubtasks(taskId, identity?.organizationId ?? '');
       if (!subtasks) return res.status(404).json({ error: { code: 'NOT_FOUND' } });
       return res.json({ data: subtasks });
     } catch (err) {
@@ -176,7 +182,7 @@ export class TaskController {
   public createSubtask = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const taskId = req.params.taskId as string;
-      const identity = (req as any).identity;
+      const identity = req.identity;
       if (identity?.role === 'AUDITOR') {
         return res.status(403).json({ error: { code: 'FORBIDDEN' } });
       }
@@ -195,7 +201,7 @@ export class TaskController {
 
       const subtask = await this.taskService.createSubtask(
         taskId,
-        identity?.organizationId,
+        identity?.organizationId ?? '',
         input.data,
         identity?.userId ?? 'system',
       );
@@ -209,7 +215,7 @@ export class TaskController {
   public addComment = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const taskId = req.params.taskId as string;
-      const identity = (req as any).identity;
+      const identity = req.identity;
 
       const task = await this.taskService.getTask(taskId, identity?.organizationId);
       if (!task) return res.status(404).json({ error: { code: 'NOT_FOUND' } });
@@ -233,7 +239,7 @@ export class TaskController {
       const text = (input.data.body || input.data.content)!;
       const comment = await this.taskService.addComment(
         task.id,
-        identity?.organizationId,
+        identity?.organizationId ?? '',
         text,
         identity?.userId ?? 'system',
       );
@@ -247,8 +253,8 @@ export class TaskController {
   public listActivity = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const taskId = req.params.taskId as string;
-      const identity = (req as any).identity;
-      const activity = await this.taskService.listActivity(taskId, identity?.organizationId);
+      const identity = req.identity;
+      const activity = await this.taskService.listActivity(taskId, identity?.organizationId ?? '');
       if (!activity) return res.status(404).json({ error: { code: 'NOT_FOUND' } });
       return res.json({ data: activity });
     } catch (err) {

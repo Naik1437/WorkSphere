@@ -22,7 +22,8 @@ const server = app.listen(config.API_PORT, () =>
 );
 async function shutdown() {
   server.close();
-  (app as any).events?.close();
+  const appWithEvents = app as unknown as { events?: { close: () => void } };
+  appWithEvents.events?.close();
   await Promise.all([prisma.$disconnect(), redis.quit()]);
 }
 process.once('SIGTERM', shutdown);

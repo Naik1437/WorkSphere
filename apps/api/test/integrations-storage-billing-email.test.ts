@@ -20,8 +20,6 @@ import {
   WORKSPHERE_PLANS,
   verifyStripeWebhookSignature,
   SandboxStripeBillingAdapter,
-  MockBillingAdapter,
-  createBillingAdapterFromEnv,
 } from '../src/billing.js';
 import { processJob } from '../src/worker.js';
 
@@ -469,10 +467,10 @@ describe('Task 20: Storage, Billing, and Email Integrations', () => {
         });
         const header = signStripePayload(payload, 'whsec_test_mock_secret_for_worksphere');
 
-        const p2002Error = new Error(
-          'Unique constraint failed on the fields: (`provider`,`external_id`)',
+        const p2002Error = Object.assign(
+          new Error('Unique constraint failed on the fields: (`provider`,`external_id`)'),
+          { code: 'P2002' },
         );
-        (p2002Error as any).code = 'P2002';
 
         const mockDb = {
           webhookEvent: {

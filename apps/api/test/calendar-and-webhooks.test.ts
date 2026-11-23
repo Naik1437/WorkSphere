@@ -8,7 +8,6 @@ import {
   escapeIcsText,
   webhookSignature,
   verifyWebhookSignature,
-  ConsoleWebhookAdapter,
 } from '../src/integrations.js';
 import { processJob } from '../src/worker.js';
 

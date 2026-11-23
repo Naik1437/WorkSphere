@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, type RequestHandler } from 'express';
 import { ProjectController } from '../controllers/project.controller.js';
 import { TaskController } from '../controllers/task.controller.js';
 
@@ -6,9 +6,9 @@ export function createProjectRouter(
   projectController: ProjectController,
   taskController: TaskController,
   middleware: {
-    authenticate: any;
-    requireDb: any;
-    requireRole: (roles: string[]) => any;
+    authenticate: RequestHandler;
+    requireDb: RequestHandler;
+    requireRole: (roles: string[]) => RequestHandler;
   },
 ): Router {
   const router = Router();

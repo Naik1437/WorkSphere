@@ -23,8 +23,13 @@ export class AuthController {
       try {
         const result = await this.authService.register(input.data);
         return res.status(201).json({ data: result, ...result });
-      } catch (err: any) {
-        if (err?.code === 'P2002') {
+      } catch (err: unknown) {
+        if (
+          typeof err === 'object' &&
+          err !== null &&
+          'code' in err &&
+          (err as { code: unknown }).code === 'P2002'
+        ) {
           return res.status(409).json({ error: { code: 'ALREADY_EXISTS' } });
         }
         throw err;

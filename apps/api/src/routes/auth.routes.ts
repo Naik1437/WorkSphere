@@ -1,15 +1,18 @@
-import { Router } from 'express';
+import { Router, type RequestHandler } from 'express';
 import { AuthController } from '../controllers/auth.controller.js';
 import { z } from 'zod';
 import { newOpaqueToken, tokenHash } from '../auth.js';
+import type { PrismaClient } from '@prisma/client';
+import type { AuthService } from '../services/auth.service.js';
 
 export function createAuthRouter(
   authController: AuthController,
-  db: any,
-  authService: any,
-  requireDb: any,
+  db: PrismaClient | undefined,
+  authService: AuthService,
+  requireDb: RequestHandler,
 ): Router {
   const router = Router();
+  const prisma = db!;
 
   router.post('/auth/register', requireDb, authController.register);
   router.post('/auth/login', requireDb, authController.login);
@@ -25,7 +28,7 @@ export function createAuthRouter(
       }
 
       const hash = tokenHash(input.data.refreshToken);
-      const session = await db.session.findFirst({
+      const session = await prisma.session.findFirst({
         where: { refreshTokenHash: hash, revokedAt: null, expiresAt: { gt: new Date() } },
         include: { user: { include: { memberships: true } } },
       });
@@ -34,9 +37,9 @@ export function createAuthRouter(
       }
 
       const nextRefreshToken = newOpaqueToken();
-      await db.$transaction([
-        db.session.update({ where: { id: session.id }, data: { revokedAt: new Date() } }),
-        db.session.create({
+      await prisma.$transaction([
+        prisma.session.update({ where: { id: session.id }, data: { revokedAt: new Date() } }),
+        prisma.session.create({
           data: {
             userId: session.userId,
             refreshTokenHash: tokenHash(nextRefreshToken),
@@ -68,7 +71,7 @@ export function createAuthRouter(
           .json({ error: { code: 'INVALID_INPUT', details: input.error.errors } });
       }
 
-      await db.session.updateMany({
+      await prisma.session.updateMany({
         where: { refreshTokenHash: tokenHash(input.data.refreshToken), revokedAt: null },
         data: { revokedAt: new Date() },
       });

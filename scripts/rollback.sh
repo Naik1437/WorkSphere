@@ -7,6 +7,7 @@ set -euo pipefail
 
 if [ "${1:-}" = "--validate" ] || [ "${1:-}" = "--dry-run" ]; then
   echo "Validating rollback script configuration..."
+  touch .env 2>/dev/null || true
   docker compose -f docker-compose.yml -f docker-compose.prod.yml config --quiet
   echo "Rollback configuration syntax and compose overlay valid."
   exit 0

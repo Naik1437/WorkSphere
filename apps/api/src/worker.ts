@@ -4,7 +4,6 @@ import { writeFileSync, existsSync, readFileSync, unlinkSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import {
-  ConsoleEmailAdapter,
   ConsoleWebhookAdapter,
   createEmailAdapterFromEnv,
   type EmailAdapter,

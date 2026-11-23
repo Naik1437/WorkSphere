@@ -1,7 +1,7 @@
 import type { Response } from 'express';
 import { randomUUID } from 'crypto';
 
-export interface RealtimeEvent<T = any> {
+export interface RealtimeEvent<T = unknown> {
   id: string;
   type: string;
   organizationId: string;
@@ -104,7 +104,7 @@ export class RealtimeBroadcaster {
   /**
    * Broadcasts an event strictly to active subscribers belonging to the given organizationId.
    */
-  public publish<T = any>(
+  public publish<T = unknown>(
     organizationId: string,
     input: { type: string; payload: T; actorId?: string },
   ): RealtimeEvent<T> {
@@ -168,8 +168,9 @@ export class RealtimeBroadcaster {
     res.write(`id: ${event.id}\n`);
     res.write(`event: ${event.type}\n`);
     res.write(`data: ${JSON.stringify(event)}\n\n`);
-    if (typeof (res as any).flush === 'function') {
-      (res as any).flush();
+    const flushable = res as unknown as { flush?: () => void };
+    if (typeof flushable.flush === 'function') {
+      flushable.flush();
     }
   }
 

@@ -38,6 +38,7 @@ jobs:
 
       - name: Validate Compose Configuration
         run: |
+          touch .env
           docker compose -f docker-compose.yml -f docker-compose.prod.yml config --quiet
           echo "Compose configuration verified for staging deployment."
         env:

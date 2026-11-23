@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { existsSync, readFileSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { resolve } from 'node:path';
 
 const PROJECT_ROOT = existsSync(resolve(process.cwd(), 'scripts'))
   ? process.cwd()
@@ -52,8 +51,7 @@ describe('A14-R07: Database Backup & Restore Procedures', () => {
     expect(existsSync(backupsDir)).toBe(true);
 
     // Read the newest backup file if available
-    const fs = require('node:fs');
-    const files = fs.readdirSync(backupsDir).filter((f: string) => f.endsWith('.sql'));
+    const files = readdirSync(backupsDir).filter((f: string) => f.endsWith('.sql'));
     if (files.length > 0) {
       const dumpPath = resolve(backupsDir, files[files.length - 1]);
       const content = readTextClean(dumpPath);

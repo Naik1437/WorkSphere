@@ -32,7 +32,9 @@ services:
       dockerfile: apps/api/Dockerfile
     command:
       ['npx', 'prisma', 'migrate', 'deploy', '--schema=packages/database/prisma/schema.prisma']
-    env_file: .env
+    env_file:
+      - path: .env
+        required: false
     environment:
       DATABASE_URL: ${DATABASE_URL:-postgresql://worksphere:change-me-before-sharing@postgres:5432/worksphere?schema=public}
     depends_on:
@@ -45,7 +47,9 @@ services:
     build:
       context: .
       dockerfile: apps/api/Dockerfile
-    env_file: .env
+    env_file:
+      - path: .env
+        required: false
     environment:
       DATABASE_URL: ${DATABASE_URL:-postgresql://worksphere:change-me-before-sharing@postgres:5432/worksphere?schema=public}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
@@ -89,7 +93,9 @@ services:
       context: .
       dockerfile: apps/api/Dockerfile
     command: ['node', 'apps/api/dist/worker.js']
-    env_file: .env
+    env_file:
+      - path: .env
+        required: false
     environment:
       DATABASE_URL: ${DATABASE_URL:-postgresql://worksphere:change-me-before-sharing@postgres:5432/worksphere?schema=public}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
@@ -124,7 +130,9 @@ services:
   analytics:
     build:
       context: apps/analytics
-    env_file: .env
+    env_file:
+      - path: .env
+        required: false
     environment:
       DATABASE_URL: ${DATABASE_URL:-postgresql://worksphere:change-me-before-sharing@postgres:5432/worksphere?schema=public}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}

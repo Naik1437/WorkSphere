@@ -1,11 +1,23 @@
-import { Router } from 'express';
+import { Router, type RequestHandler } from 'express';
 import { openApiSpec, renderSwaggerUiHtml } from '../openapi.js';
+import type { MetricsCollector } from '../metrics.js';
+import type { RealtimeBroadcaster } from '../events.js';
+
+export interface SystemDependencies {
+  databasePing: () => Promise<void>;
+  redisPing: () => Promise<void>;
+  database?: {
+    job?: {
+      count: (args?: { where?: Record<string, unknown> }) => Promise<number>;
+    };
+  };
+}
 
 export function createSystemRouter(dependencies: {
-  dependencies?: any;
-  metrics: any;
-  events: any;
-  authenticate: any;
+  dependencies?: SystemDependencies;
+  metrics: MetricsCollector;
+  events: RealtimeBroadcaster;
+  authenticate: RequestHandler;
 }): Router {
   const router = Router();
   const { dependencies: deps, metrics, events, authenticate } = dependencies;
@@ -130,13 +142,14 @@ export function createSystemRouter(dependencies: {
 
   // Server-Sent Events real-time stream
   router.get('/api/v1/events', authenticate, (req, res) => {
-    const identity = (req as any).identity;
+    const identity = req.identity;
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache, no-transform');
     res.setHeader('Connection', 'keep-alive');
     res.setHeader('X-Accel-Buffering', 'no');
-    if (typeof (res as any).flushHeaders === 'function') {
-      (res as any).flushHeaders();
+    const flushable = res as unknown as { flushHeaders?: () => void };
+    if (typeof flushable.flushHeaders === 'function') {
+      flushable.flushHeaders();
     }
 
     const lastEventId =
@@ -146,7 +159,9 @@ export function createSystemRouter(dependencies: {
           ? req.query.lastEventId
           : undefined;
 
-    events.subscribe(identity.organizationId, res, lastEventId);
+    if (identity?.organizationId) {
+      events.subscribe(identity.organizationId, res, lastEventId);
+    }
   });
 
   // OpenAPI Documentation

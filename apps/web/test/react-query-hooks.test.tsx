@@ -13,9 +13,11 @@ function createWrapper() {
       },
     },
   });
-  return ({ children }: { children: React.ReactNode }) => (
+  const Wrapper = ({ children }: { children: React.ReactNode }) => (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
+  Wrapper.displayName = 'TestQueryClientWrapper';
+  return Wrapper;
 }
 
 describe('React Query Data Hooks (A01-R08)', () => {

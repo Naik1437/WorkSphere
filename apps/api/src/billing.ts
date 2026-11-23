@@ -68,7 +68,7 @@ export interface BillingWebhookResult {
     organizationId?: string;
     planId?: PlanTier;
     status?: string;
-    data: Record<string, any>;
+    data: Record<string, unknown>;
   };
   error?: string;
 }

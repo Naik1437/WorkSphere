@@ -2,6 +2,7 @@
 import cors from 'cors';
 import express from 'express';
 import pinoHttp from 'pino-http';
+import type { PrismaClient } from '@prisma/client';
 import { createHmac, randomUUID, timingSafeEqual } from 'node:crypto';
 import type { Config } from './config.js';
 import { RealtimeBroadcaster } from './events.js';
@@ -37,7 +38,7 @@ import { createSystemRouter } from './routes/system.routes.js';
 export interface Dependencies {
   databasePing: () => Promise<void>;
   redisPing: () => Promise<void>;
-  database?: any;
+  database?: PrismaClient;
   authSecret?: string;
   events?: RealtimeBroadcaster;
   metrics?: MetricsCollector;
@@ -206,6 +207,7 @@ export function createApp(
       response: express.Response,
       _next: express.NextFunction,
     ) => {
+      void _next;
       console.error('SERVER_ERROR_DETAIL:', error);
       const pinoError = error as { status?: number; statusCode?: number; message?: string };
       const status = pinoError.status ?? pinoError.statusCode ?? 500;

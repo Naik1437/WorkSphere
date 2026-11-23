@@ -3,7 +3,6 @@ import { describe, expect, it, vi } from 'vitest';
 import request from 'supertest';
 import { createHmac } from 'crypto';
 import { createApp } from '../src/app.js';
-import { RealtimeBroadcaster } from '../src/events.js';
 
 const TEST_SECRET = 'test-secret-that-is-long-enough-32-chars';
 
@@ -33,6 +32,7 @@ describe('A12-R06: Multi-Tenant Security & Penetration Testing', () => {
   };
 
   const userBetaOwner = { userId: 'user-beta-owner', organizationId: orgBeta.id, role: 'OWNER' };
+  void userBetaOwner;
   const userBetaMember = {
     userId: 'b0000000-0000-0000-0000-000000000002',
     organizationId: orgBeta.id,

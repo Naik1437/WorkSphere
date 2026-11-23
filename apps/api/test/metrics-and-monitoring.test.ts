@@ -185,7 +185,9 @@ describe('Metrics and Monitoring (A14-R08)', () => {
     it('reports queue health when database mock provides job count', async () => {
       const mockDb = {
         job: {
-          count: async (args: any) => {
+          count: async (args: {
+            where?: { failedAt?: { not?: unknown }; attempts?: { gt?: number } };
+          }) => {
             if (args?.where?.failedAt?.not !== undefined) return 1; // 1 dead letter
             if (args?.where?.attempts?.gt !== undefined) return 2; // 2 retrying
             return 5; // 5 pending

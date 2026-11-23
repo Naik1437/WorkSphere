@@ -7,8 +7,8 @@ export class ProjectController {
 
   public listProjects = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const identity = (req as any).identity;
-      const projects = await this.projectService.listProjects(identity.organizationId);
+      const identity = req.identity;
+      const projects = await this.projectService.listProjects(identity?.organizationId ?? '');
       return res.json({ data: projects });
     } catch (err) {
       return next(err);
@@ -18,8 +18,11 @@ export class ProjectController {
   public getProject = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const projectId = req.params.projectId as string;
-      const identity = (req as any).identity;
-      const project = await this.projectService.getProject(projectId, identity.organizationId);
+      const identity = req.identity;
+      const project = await this.projectService.getProject(
+        projectId,
+        identity?.organizationId ?? '',
+      );
       if (!project) return res.status(404).json({ error: { code: 'NOT_FOUND' } });
       return res.json({ data: project });
     } catch (err) {
@@ -40,11 +43,11 @@ export class ProjectController {
           .json({ error: { code: 'INVALID_INPUT', details: input.error.errors } });
       }
 
-      const identity = (req as any).identity;
+      const identity = req.identity;
       const project = await this.projectService.createProject(
-        identity.organizationId,
+        identity?.organizationId ?? '',
         input.data,
-        identity.userId,
+        identity?.userId ?? 'system',
       );
       return res.status(201).json({ data: project });
     } catch (err) {
@@ -66,12 +69,12 @@ export class ProjectController {
           .json({ error: { code: 'INVALID_INPUT', details: input.error.errors } });
       }
 
-      const identity = (req as any).identity;
+      const identity = req.identity;
       const project = await this.projectService.updateProject(
         projectId,
-        identity.organizationId,
+        identity?.organizationId ?? '',
         input.data,
-        identity.userId,
+        identity?.userId ?? 'system',
       );
       if (!project) return res.status(404).json({ error: { code: 'NOT_FOUND' } });
       return res.json({ data: project });
@@ -83,11 +86,11 @@ export class ProjectController {
   public deleteProject = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const projectId = req.params.projectId as string;
-      const identity = (req as any).identity;
+      const identity = req.identity;
       const project = await this.projectService.deleteProject(
         projectId,
-        identity.organizationId,
-        identity.userId,
+        identity?.organizationId ?? '',
+        identity?.userId ?? 'system',
       );
       if (!project) return res.status(404).json({ error: { code: 'NOT_FOUND' } });
       return res.status(204).end();
@@ -99,10 +102,10 @@ export class ProjectController {
   public listMilestones = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const projectId = req.params.projectId as string;
-      const identity = (req as any).identity;
+      const identity = req.identity;
       const milestones = await this.projectService.listMilestones(
         projectId,
-        identity.organizationId,
+        identity?.organizationId ?? '',
       );
       if (!milestones) return res.status(404).json({ error: { code: 'NOT_FOUND' } });
       return res.json({ data: milestones });
@@ -125,10 +128,10 @@ export class ProjectController {
           .json({ error: { code: 'INVALID_INPUT', details: input.error.errors } });
       }
 
-      const identity = (req as any).identity;
+      const identity = req.identity;
       const milestone = await this.projectService.createMilestone(
         projectId,
-        identity.organizationId,
+        identity?.organizationId ?? '',
         {
           title: input.data.name,
           dueAt: input.data.dueAt ? new Date(input.data.dueAt) : undefined,

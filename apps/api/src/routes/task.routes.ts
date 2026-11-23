@@ -1,12 +1,12 @@
-import { Router } from 'express';
+import { Router, type RequestHandler } from 'express';
 import { TaskController } from '../controllers/task.controller.js';
 
 export function createTaskRouter(
   taskController: TaskController,
   middleware: {
-    authenticate: any;
-    requireDb: any;
-    requireRole: (roles: string[]) => any;
+    authenticate: RequestHandler;
+    requireDb: RequestHandler;
+    requireRole: (roles: string[]) => RequestHandler;
   },
 ): Router {
   const router = Router();

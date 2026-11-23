@@ -317,7 +317,7 @@ export interface WebhookAdapter {
     targetUrl: string;
     secret: string;
     event: string;
-    payload: Record<string, any>;
+    payload: Record<string, unknown>;
     idempotencyKey: string;
   }): Promise<{ signature: string; delivered: boolean }>;
 }
@@ -327,7 +327,7 @@ export class ConsoleWebhookAdapter implements WebhookAdapter {
     targetUrl: string;
     secret: string;
     event: string;
-    payload: Record<string, any>;
+    payload: Record<string, unknown>;
     idempotencyKey: string;
   }): Promise<{ signature: string; delivered: boolean }> {
     const serializedPayload = JSON.stringify(input.payload);

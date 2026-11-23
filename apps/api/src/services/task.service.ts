@@ -78,7 +78,7 @@ export class TaskService {
       }
     }
 
-    const updateData: Record<string, any> = {};
+    const updateData: Record<string, unknown> = {};
     if (input.title !== undefined) updateData.title = input.title;
     if (input.description !== undefined) updateData.description = input.description;
     if (input.status !== undefined) updateData.status = input.status;

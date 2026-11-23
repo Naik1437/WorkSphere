@@ -1,12 +1,12 @@
-import { Router } from 'express';
+import { Router, type RequestHandler } from 'express';
 import { TeamController } from '../controllers/team.controller.js';
 
 export function createTeamRouter(
   teamController: TeamController,
   middleware: {
-    authenticate: any;
-    requireDb: any;
-    requireRole: (roles: string[]) => any;
+    authenticate: RequestHandler;
+    requireDb: RequestHandler;
+    requireRole: (roles: string[]) => RequestHandler;
   },
 ): Router {
   const router = Router();
