@@ -57,6 +57,15 @@ describe('A07-R01: Server-Sent Events (SSE) Real-Time Updates', () => {
 
       let chunkData = '';
       await new Promise<void>((resolve, reject) => {
+        const timeout = setTimeout(() => {
+          req.destroy();
+          server.close(() =>
+            reject(
+              new Error(`Timed out waiting for complete SSE handshake. Received:\n${chunkData}`),
+            ),
+          );
+        }, 5000);
+
         const req = http.get(
           `http://127.0.0.1:${port}/api/v1/events?token=${encodeURIComponent(token)}`,
           (res) => {
@@ -67,7 +76,11 @@ describe('A07-R01: Server-Sent Events (SSE) Real-Time Updates', () => {
 
             res.on('data', (chunk) => {
               chunkData += chunk.toString();
-              if (chunkData.includes('system.connected')) {
+              if (
+                chunkData.includes('event: system.connected') &&
+                chunkData.includes('"organizationId":"org-1"')
+              ) {
+                clearTimeout(timeout);
                 req.destroy(); // Safely close the client SSE stream
                 server.close(() => resolve());
               }
@@ -75,6 +88,7 @@ describe('A07-R01: Server-Sent Events (SSE) Real-Time Updates', () => {
           },
         );
         req.on('error', (err) => {
+          clearTimeout(timeout);
           // req.destroy causes ECONNRESET which is expected when aborting stream
           if ((err as any).code === 'ECONNRESET') {
             resolve();
