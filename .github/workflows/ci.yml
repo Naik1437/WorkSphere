@@ -1,0 +1,40 @@
+name: CI
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: worksphere
+          POSTGRES_USER: worksphere
+          POSTGRES_PASSWORD: worksphere
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U worksphere -d worksphere"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://worksphere:worksphere@localhost:5432/worksphere?schema=public
+      REDIS_URL: redis://localhost:6379
+      AUTH_SECRET: ci-only-secret-that-is-at-least-32-characters
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm install
+      - run: npm run migrate:deploy -w @worksphere/database
+      - run: npm run format:check
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.13' }
+      - run: pip install -r apps/analytics/requirements.txt
+      - run: pytest apps/analytics/tests

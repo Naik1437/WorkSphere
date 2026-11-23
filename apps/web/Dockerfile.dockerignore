@@ -1,0 +1,39 @@
+# Dependencies
+node_modules
+**/node_modules
+**/node_modules/**
+
+# Next.js build outputs and caches
+.next
+**/.next
+**/.next/**
+apps/web/.next
+apps/web/.next/**
+
+# Distribution and build outputs
+dist
+**/dist
+**/dist/**
+
+# Python virtual environments and caches
+.venv
+**/.venv
+**/.venv/**
+venv
+**/venv
+**/venv/**
+__pycache__
+**/__pycache__
+**/__pycache__/**
+.pytest_cache
+**/.pytest_cache
+**/.pytest_cache/**
+
+# Git and OS metadata
+.git
+.DS_Store
+
+# Environment variables
+.env
+.env.*
+!.env.example

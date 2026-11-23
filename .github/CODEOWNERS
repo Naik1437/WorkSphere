@@ -1,0 +1,4 @@
+# Replace these placeholders with GitHub usernames or team handles after repository setup.
+* @worksphere-maintainers
+/packages/database/ @worksphere-database-reviewers
+/apps/api/ @worksphere-api-reviewers

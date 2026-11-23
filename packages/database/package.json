@@ -1,0 +1,14 @@
+{
+  "name": "@worksphere/database",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "build": "prisma generate",
+    "typecheck": "prisma validate",
+    "migrate:dev": "prisma migrate dev",
+    "migrate:deploy": "prisma migrate deploy"
+  },
+  "devDependencies": {
+    "prisma": "^6.1.0"
+  }
+}

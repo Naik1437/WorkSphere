@@ -1,0 +1,155 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-worksphere}
+      POSTGRES_USER: ${POSTGRES_USER:-worksphere}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    networks: [backend]
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks: [backend]
+
+  migration:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    command: ['npx', 'prisma', 'migrate', 'deploy', '--schema=packages/database/prisma/schema.prisma']
+    env_file: .env
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql://worksphere:change-me-before-sharing@postgres:5432/worksphere?schema=public}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks: [backend]
+    restart: 'no'
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    env_file: .env
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql://worksphere:change-me-before-sharing@postgres:5432/worksphere?schema=public}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+      API_PORT: 4000
+      AUTH_SECRET: ${AUTH_SECRET:-local-development-secret-change-before-deploy}
+      ANALYTICS_SERVICE_URL: ${ANALYTICS_SERVICE_URL:-http://analytics:8000}
+    ports: ['4000:4000']
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://127.0.0.1:4000/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      migration:
+        condition: service_completed_successfully
+    networks: [backend]
+
+  worker:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    command: ['node', 'apps/api/dist/worker.js']
+    env_file: .env
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql://worksphere:change-me-before-sharing@postgres:5432/worksphere?schema=public}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+      AUTH_SECRET: ${AUTH_SECRET:-local-development-secret-change-before-deploy}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      migration:
+        condition: service_completed_successfully
+    networks: [backend]
+    restart: unless-stopped
+
+  analytics:
+    build:
+      context: apps/analytics
+    env_file: .env
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql://worksphere:change-me-before-sharing@postgres:5432/worksphere?schema=public}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+      ANALYTICS_PORT: 8000
+      ANALYTICS_SERVICE_TOKEN: ${ANALYTICS_SERVICE_TOKEN:-}
+    ports: ['8000:8000']
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'python',
+          '-c',
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/ready')",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks: [backend]
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:4000/api/v1}
+    ports: ['3000:3000']
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "const os=require('node:os');const ips=Object.values(os.networkInterfaces()).flat().filter(i=>i&&!i.internal&&i.family==='IPv4').map(i=>i.address);Promise.any(ips.map(ip=>fetch('http://'+ip+':3000/').then(r=>{if(!r.ok)throw Error();}))).then(()=>process.exit(0)).catch(()=>process.exit(1))",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    depends_on:
+      api:
+        condition: service_healthy
+    networks: [backend]
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  backend:
+    internal: false
