@@ -55,7 +55,14 @@ export function createApp(
   const app = express();
   app.disable('x-powered-by');
   app.use(pinoHttp());
-  app.use(cors({ origin: false }));
+  app.use(
+    cors({
+      origin: true,
+      credentials: true,
+      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'x-request-id', 'Last-Event-ID'],
+    }),
+  );
   app.use(express.json({ limit: '100kb' }));
 
   // Metrics telemetry tracking (A14-R08)
