@@ -1,0 +1,78 @@
+{
+    # Global options
+    admin off
+    auto_https disable_redirects
+    log {
+        output stdout
+        format json
+        level INFO
+    }
+}
+
+# In production, set DOMAIN in environment (e.g. DOMAIN=worksphere.example.com)
+# For local / testing, defaults to :80 or localhost with internal TLS
+{$DOMAIN:localhost}, :80 {
+    # TLS configuration:
+    # If DOMAIN is a public FQDN, Caddy automatically provisions Let's Encrypt / ZeroSSL certs.
+    # If DOMAIN is localhost or internal, it uses internal self-signed TLS.
+    @is_public_domain {
+        not header Host localhost*
+        not header Host 127.0.0.1*
+    }
+    
+    # Enable HTTP compression (Zstandard & Gzip)
+    encode zstd gzip
+
+    # Production Security Headers (A14-R02)
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "DENY"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        Permissions-Policy "accelerometer=(), camera=(), geolocation=(), gyroscope=(), microphone=(), payment=()"
+        -Server
+    }
+
+    # API Routing (/api/*, /health, /ready, /metrics, /docs)
+    handle /api/* {
+        reverse_proxy api:4000 {
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+
+    handle /health {
+        reverse_proxy api:4000
+    }
+
+    handle /ready {
+        reverse_proxy api:4000
+    }
+
+    handle /metrics {
+        reverse_proxy api:4000
+    }
+
+    handle /docs* {
+        reverse_proxy api:4000
+    }
+
+    # Real-Time Server-Sent Events (SSE) Route
+    # Requires immediate flushing without proxy response buffering
+    handle /events {
+        reverse_proxy api:4000 {
+            flush_interval -1
+            header_up Connection "keep-alive"
+        }
+    }
+
+    # Frontend Next.js Web Application Routing (all other traffic)
+    handle {
+        reverse_proxy web:3000 {
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+}

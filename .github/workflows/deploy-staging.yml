@@ -1,0 +1,113 @@
+name: Deploy to Staging
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: 'Image tag to deploy (default: latest commit SHA)'
+        required: false
+        default: 'latest'
+
+concurrency:
+  group: deployment-staging
+  cancel-in-progress: false
+
+jobs:
+  deploy-staging:
+    name: Staging Deployment & Health Verification
+    runs-on: ubuntu-latest
+    environment:
+      name: staging
+      url: https://staging.worksphere.local
+
+    env:
+      NODE_ENV: production
+      DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL || 'postgresql://worksphere:worksphere@localhost:5432/worksphere?schema=public' }}
+      REDIS_URL: ${{ secrets.STAGING_REDIS_URL || 'redis://localhost:6379' }}
+      AUTH_SECRET: ${{ secrets.STAGING_AUTH_SECRET || 'staging-secret-key-at-least-32-chars-long' }}
+      IMAGE_TAG: ${{ inputs.image_tag || github.sha }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Validate Compose Configuration
+        run: |
+          docker compose -f docker-compose.yml -f docker-compose.prod.yml config --quiet
+          echo "Compose configuration verified for staging deployment."
+
+      - name: Snapshot Deployment State for Rollback
+        run: |
+          mkdir -p .deploy-state
+          echo "DEPLOY_SHA=${{ github.sha }}" > .deploy-state/current_deployment.env
+          echo "DEPLOY_TIMESTAMP=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> .deploy-state/current_deployment.env
+          echo "Snapshot of current state recorded."
+
+      - name: Set up Node.js for Migrations
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Deploy Database Migrations
+        run: |
+          echo "Applying pending Prisma database migrations to staging..."
+          npm run migrate:deploy -w @worksphere/database
+        env:
+          DATABASE_URL: ${{ env.DATABASE_URL }}
+
+      - name: Build & Deploy Staging Containers
+        run: |
+          echo "Building and launching staging containers..."
+          docker compose -f docker-compose.yml -f docker-compose.prod.yml build
+          docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --remove-orphans
+
+      - name: Health Check & Readiness Probes
+        run: |
+          echo "Verifying service readiness (polling /ready for 60 seconds)..."
+          SUCCESS=0
+          for i in $(seq 1 12); do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:4000/ready || true)
+            if [ "$STATUS" = "200" ]; then
+              echo "API is healthy and ready (HTTP 200) on attempt $i."
+              SUCCESS=1
+              break
+            fi
+            echo "Waiting for API readiness (attempt $i/12)..."
+            sleep 5
+          done
+
+          if [ "$SUCCESS" -ne 1 ]; then
+            echo "ERROR: Health check timed out! Initiating automated rollback..."
+            exit 1
+          fi
+
+      - name: Execute Staging Smoke Tests
+        run: |
+          echo "Running post-deployment smoke verification tests..."
+          curl -f -s http://localhost:4000/health | grep -q '"status":"ok"'
+          curl -f -s http://localhost:4000/api/v1 | grep -q 'WorkSphere API'
+          echo "Staging smoke verification passed successfully."
+
+      - name: Automatic Rollback on Deployment Failure
+        if: failure()
+        run: |
+          echo "=========================================================="
+          echo "CRITICAL: Staging deployment failed. Triggering rollback!"
+          echo "=========================================================="
+          if [ -f "scripts/rollback.sh" ]; then
+            chmod +x scripts/rollback.sh
+            ./scripts/rollback.sh --automated --environment staging
+          else
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml down
+          fi
+          echo "Rollback sequence completed."
+          exit 1

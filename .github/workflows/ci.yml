@@ -20,6 +20,15 @@ jobs:
           --health-interval 5s
           --health-timeout 5s
           --health-retries 10
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
     env:
       DATABASE_URL: postgresql://worksphere:worksphere@localhost:5432/worksphere?schema=public
       REDIS_URL: redis://localhost:6379
@@ -34,7 +43,52 @@ jobs:
       - run: npm run lint
       - run: npm run typecheck
       - run: npm test
+      - name: Install Playwright Chromium
+        run: npx playwright install chromium --with-deps
+      - name: Run Playwright E2E tests
+        run: npm run test:e2e -w @worksphere/web
+        env:
+          CI: true
+      - name: Audit Node dependencies for vulnerabilities
+        run: npm audit
+        continue-on-error: true
       - uses: actions/setup-python@v5
         with: { python-version: '3.13' }
       - run: pip install -r apps/analytics/requirements.txt
       - run: pytest apps/analytics/tests
+      - name: Audit Python dependencies for vulnerabilities
+        run: |
+          pip install pip-audit
+          pip-audit -r apps/analytics/requirements.txt
+        continue-on-error: true
+
+  docker-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Validate Docker Compose Configuration
+        run: docker compose config --quiet
+      - name: Build Web Container
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: apps/web/Dockerfile
+          push: false
+          tags: worksphere/web:test
+      - name: Build API Container
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: apps/api/Dockerfile
+          push: false
+          tags: worksphere/api:test
+      - name: Build Analytics Container
+        uses: docker/build-push-action@v6
+        with:
+          context: apps/analytics
+          file: apps/analytics/Dockerfile
+          push: false
+          tags: worksphere/analytics:test
+

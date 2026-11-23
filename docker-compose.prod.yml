@@ -1,0 +1,51 @@
+services:
+  caddy:
+    image: caddy:2.9-alpine
+    restart: always
+    ports:
+      - '80:80'
+      - '443:443'
+      - '443:443/udp'
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    environment:
+      DOMAIN: ${DOMAIN:-localhost}
+    depends_on:
+      web:
+        condition: service_healthy
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD', 'caddy', 'version']
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    networks: [backend]
+
+  api:
+    restart: always
+    ports: []
+
+  web:
+    restart: always
+    ports: []
+
+  worker:
+    restart: always
+
+  analytics:
+    restart: always
+    ports: []
+
+  postgres:
+    restart: always
+
+  redis:
+    restart: always
+
+volumes:
+  caddy_data:
+  caddy_config:

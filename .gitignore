@@ -26,10 +26,16 @@ dist/
 **/dist/
 build/
 coverage/
+test-results/
+playwright-report/
 *.tsbuildinfo
 .turbo/
 
 # Backups & Temp files
+backups/
+*.sql
+!packages/database/prisma/migrations/**/*.sql
+*.sql.gz
 *.bak
 *.tmp
 *.log

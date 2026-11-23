@@ -51,6 +51,16 @@ services:
       API_PORT: 4000
       AUTH_SECRET: ${AUTH_SECRET:-local-development-secret-change-before-deploy}
       ANALYTICS_SERVICE_URL: ${ANALYTICS_SERVICE_URL:-http://analytics:8000}
+      STORAGE_DRIVER: ${STORAGE_DRIVER:-simulated}
+      STORAGE_ENDPOINT: ${STORAGE_ENDPOINT:-http://minio:9000}
+      STORAGE_BUCKET: ${STORAGE_BUCKET:-worksphere-attachments}
+      STORAGE_ACCESS_KEY: ${STORAGE_ACCESS_KEY:-minioadmin}
+      STORAGE_SECRET_KEY: ${STORAGE_SECRET_KEY:-minioadmin}
+      STORAGE_REGION: ${STORAGE_REGION:-us-east-1}
+      EMAIL_DRIVER: ${EMAIL_DRIVER:-console}
+      SMTP_HOST: ${SMTP_HOST:-mailpit}
+      SMTP_PORT: ${SMTP_PORT:-1025}
+      EMAIL_FROM: ${EMAIL_FROM:-noreply@worksphere.local}
     ports: ['4000:4000']
     healthcheck:
       test:
@@ -83,6 +93,23 @@ services:
       DATABASE_URL: ${DATABASE_URL:-postgresql://worksphere:change-me-before-sharing@postgres:5432/worksphere?schema=public}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
       AUTH_SECRET: ${AUTH_SECRET:-local-development-secret-change-before-deploy}
+      WORKER_HEARTBEAT_FILE: /tmp/worksphere-worker-heartbeat
+      EMAIL_DRIVER: ${EMAIL_DRIVER:-console}
+      SMTP_HOST: ${SMTP_HOST:-mailpit}
+      SMTP_PORT: ${SMTP_PORT:-1025}
+      EMAIL_FROM: ${EMAIL_FROM:-noreply@worksphere.local}
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "const fs=require('node:fs');const p=process.env.WORKER_HEARTBEAT_FILE||require('node:os').tmpdir()+'/worksphere-worker-heartbeat';if(!fs.existsSync(p)||Date.now()-parseInt(fs.readFileSync(p,'utf8'),10)>30000)process.exit(1);process.exit(0);",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
     depends_on:
       postgres:
         condition: service_healthy
@@ -146,9 +173,46 @@ services:
         condition: service_healthy
     networks: [backend]
 
+  minio:
+    profiles: ["integrations"]
+    image: minio/minio:RELEASE.2024-11-07T00-52-28Z
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ['CMD', 'mc', 'ready', 'local']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks: [backend]
+
+  mailpit:
+    profiles: ["integrations"]
+    image: axllent/mailpit:v1.21.8
+    ports:
+      - '1025:1025'
+      - '8025:8025'
+    environment:
+      MP_MAX_MESSAGES: 500
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:8025/api/v1/info']
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    networks: [backend]
+
 volumes:
   postgres_data:
   redis_data:
+  minio_data:
 
 networks:
   backend:

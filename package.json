@@ -11,9 +11,19 @@
     "build": "npm run build -w @worksphere/database && npm run build -w @worksphere/api && npm run build -w @worksphere/web",
     "lint": "npm run lint -w @worksphere/api && npm run lint -w @worksphere/web",
     "typecheck": "npm run typecheck -w @worksphere/database && npm run typecheck -w @worksphere/api && npm run typecheck -w @worksphere/web",
-    "test": "npm run test -w @worksphere/api",
+    "test": "npm run test -w @worksphere/api && npm run test -w @worksphere/web",
+    "test:e2e": "npm run test:e2e -w @worksphere/web",
+    "drill:incident": "node scripts/run-incident-drills.mjs",
+    "benchmark:100k": "python apps/analytics/benchmark_100k.py",
+    "db:backup": "powershell -ExecutionPolicy Bypass -File scripts/backup-db.ps1",
+    "db:backup:sh": "bash scripts/backup-db.sh",
+    "db:restore": "powershell -ExecutionPolicy Bypass -File scripts/restore-db.ps1",
+    "db:restore:sh": "bash scripts/restore-db.sh",
+    "db:restore:drill": "powershell -ExecutionPolicy Bypass -File scripts/run-restore-drill.ps1",
+    "db:restore:drill:sh": "bash scripts/run-restore-drill.sh",
     "format:check": "prettier --check .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "audit": "npm audit"
   },
   "devDependencies": {
     "concurrently": "^9.1.2",
